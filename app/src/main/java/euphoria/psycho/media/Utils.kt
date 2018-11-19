@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import euphoria.psycho.media.C.photoExtensions
+import java.io.File
 
 object C {
 
@@ -34,6 +36,12 @@ object C {
 val videoExtensions: Array<String> get() = arrayOf(".mp4", ".mkv", ".webm", ".avi", ".3gp", ".mov", ".m4v", ".3gpp")
 val audioExtensions: Array<String> get() = arrayOf(".mp3", ".wav", ".wma", ".ogg", ".m4a", ".opus", ".flac", ".aac")
 val rawExtensions: Array<String> get() = arrayOf(".dng", ".orf", ".nef")
+
+
+fun String.getExternalStorageFile(): File {
+
+    return File(Environment.getExternalStorageDirectory(), this)
+}
 
 fun Context.displayMetrics(): DisplayMetrics {
 
