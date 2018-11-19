@@ -17,6 +17,7 @@ class BrowserAdapter(
 ) :
     SelectableAdapter<ViewHolder>(items, selectPaths) {
 
+    var browserItemListener: BrowserItemListener? = null
     private var mImageSize = 0
     private var mRequestOptions: RequestOptions
 
@@ -54,13 +55,20 @@ class BrowserAdapter(
             }
             holder.title.text = item.path.substringAfterLast('/')
             holder.count.text = "0"
+            browserItemListener?.let { callback -> holder.itemView.setOnClickListener { callback.onClicked(item) } }
             holder.bottomOverlay.visibility = View.VISIBLE
         } else {
             holder.imageView.setImageResource(R.drawable.ic_camera)
             holder.bottomOverlay.visibility = View.GONE
+            browserItemListener?.let { callback -> holder.itemView.setOnClickListener { callback.onCameraClicked() } }
 
         }
 
+    }
+
+    fun updateData(list: List<BrowserItem>) {
+        setData(list)
+        notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int {

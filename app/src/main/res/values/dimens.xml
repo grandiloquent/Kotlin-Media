@@ -1,4 +1,4 @@
 <resources>
-
-
+    <dimen name="exo_media_button_width">71dp</dimen>
+    <dimen name="exo_media_button_height">52dp</dimen>
 </resources>
