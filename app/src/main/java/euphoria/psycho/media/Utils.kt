@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,6 +34,25 @@ object C {
 val videoExtensions: Array<String> get() = arrayOf(".mp4", ".mkv", ".webm", ".avi", ".3gp", ".mov", ".m4v", ".3gpp")
 val audioExtensions: Array<String> get() = arrayOf(".mp3", ".wav", ".wma", ".ogg", ".m4a", ".opus", ".flac", ".aac")
 val rawExtensions: Array<String> get() = arrayOf(".dng", ".orf", ".nef")
+
+fun Context.displayMetrics(): DisplayMetrics {
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        DisplayMetrics().also {
+            windowManager().defaultDisplay.getRealMetrics(it)
+        }
+    } else {
+        resources.displayMetrics
+    }
+}
+
+fun Context.windowManager(): WindowManager {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        getSystemService(WindowManager::class.java)
+    } else {
+        getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+}
 
 fun String.isImage(): Boolean {
     return photoExtensions.any { endsWith(it, true) }

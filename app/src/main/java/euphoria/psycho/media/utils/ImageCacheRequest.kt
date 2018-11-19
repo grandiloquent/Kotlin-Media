@@ -26,17 +26,18 @@ abstract class ImageCacheRequest(
                 val options = BitmapFactory.Options().apply {
                     inPreferredConfig = Bitmap.Config.ARGB_8888
                 }
-                return if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
-                    DecodeUtils.decodeUsingPool(
-                        jc,
-                        buffer.data, buffer.offset, buffer.length, options
-                    );
-                } else {
-                    DecodeUtils.decodeUsingPool(
-                        jc,
-                        buffer.data, buffer.offset, buffer.length, options
-                    );
-                }
+
+//                return if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
+//                    DecodeUtils.decodeUsingPool(
+//                        jc,
+//                        buffer.data, buffer.offset, buffer.length, options
+//                    );
+//                } else {
+//                    DecodeUtils.decodeUsingPool(
+//                        jc,
+//                        buffer.data, buffer.offset, buffer.length, options
+//                    );
+//                }
             }
         } finally {
             MediaItem.getBytesBufferPool().recycle(buffer)
