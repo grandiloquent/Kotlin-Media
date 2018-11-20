@@ -2,8 +2,12 @@ package  euphoria.psycho.common
 
 import android.content.Context
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.os.Build
+import android.preference.PreferenceManager
+import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import kotlin.properties.Delegates
 
@@ -14,12 +18,16 @@ object Values {
         get() = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         set(value) = audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, value, 0)
 
+    val defaultPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
     val audioManager by lazy {
         if (Build.VERSION.SDK_INT >= 23)
             context.getSystemService(AudioManager::class.java)
         else
             context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
+
     val maxMusicVolume by lazy {
         audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
@@ -60,5 +68,29 @@ object Values {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
             windowManager.defaultDisplay.getRealSize(size)
         size
+    }
+    val density by lazy {
+        context.resources.displayMetrics.density
+    }
+    val touchSlop by lazy {
+        ViewConfiguration.get(context).scaledTouchSlop
+    }
+    val widthPixels: Int
+        get() = context.resources.displayMetrics.widthPixels
+
+    fun setBackground(view: View, background: Drawable) {
+        if (Build.VERSION.SDK_INT >= 16) {
+            view.background = background
+        } else {
+            view.setBackgroundDrawable(background)
+        }
+    }
+
+    fun getColor(id: Int): Int {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return context.getColor(id);
+        } else {
+            return context.resources.getColor(id);
+        }
     }
 }

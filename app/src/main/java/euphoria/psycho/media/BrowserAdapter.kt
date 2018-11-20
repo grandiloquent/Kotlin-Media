@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
+import euphoria.psycho.common.formatSize
 import java.io.File
 
 class BrowserAdapter(
@@ -54,7 +55,7 @@ class BrowserAdapter(
                     .into(holder.imageView)
             }
             holder.title.text = item.path.substringAfterLast('/')
-            holder.count.text = "0"
+            holder.count.text = item.size.formatSize()
             browserItemListener?.let { callback -> holder.itemView.setOnClickListener { callback.onClicked(item) } }
             holder.bottomOverlay.visibility = View.VISIBLE
         } else {

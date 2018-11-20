@@ -28,10 +28,10 @@ fun File.buildUniqueFileWithExtension(name: String, ext: String?): File {
     // If conflicting file, try adding counter suffix
     var n = 0
     while (file.exists()) {
-        if (n++ >= 32) {
+        if (n++ >= 320) {
             throw FileNotFoundException("Failed to create unique file")
         }
-        file = buildFile(this, "$name ($n)", ext)
+        file = buildFile(this, "$name (${n.toString().padStart(3, '0')})", ext)
     }
     return file
 }

@@ -1,6 +1,7 @@
 package euphoria.psycho.media
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +54,12 @@ class BrowserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         NavigationUI.setupActionBarWithNavController(this, mNavController, mDrawerLayout)
         NavigationUI.setupWithNavController(mNavigationView, mNavController)
         mNavigationView.setNavigationItemSelectedListener(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_options, menu)
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
