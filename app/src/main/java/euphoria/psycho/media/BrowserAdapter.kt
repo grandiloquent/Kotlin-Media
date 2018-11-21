@@ -56,7 +56,14 @@ class BrowserAdapter(
             }
             holder.title.text = item.path.substringAfterLast('/')
             holder.count.text = item.size.formatSize()
-            browserItemListener?.let { callback -> holder.itemView.setOnClickListener { callback.onClicked(item) } }
+            browserItemListener?.let { callback ->
+                holder.itemView.setOnClickListener {
+                    callback.onClicked(item)
+                }
+                holder.itemView.setOnLongClickListener {
+                    callback.onLongClicked(item)
+                }
+            }
             holder.bottomOverlay.visibility = View.VISIBLE
         } else {
             holder.imageView.setImageResource(R.drawable.ic_camera)

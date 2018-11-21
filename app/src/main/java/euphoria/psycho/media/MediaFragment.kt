@@ -3,10 +3,9 @@ package euphoria.psycho.media
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -16,11 +15,14 @@ import com.bumptech.glide.RequestManager
 import euphoria.psycho.common.Values
 import euphoria.psycho.common.ui.SwipeRefreshLayout
 import euphoria.psycho.videos.PlayerActivity
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import kotlin.math.abs
 
-class MediaFragment : Fragment(), BrowserItemListener {
+class MediaFragment : Fragment(), BrowserItemListener, ActionMode.Callback {
 
+
+    private var mActionMode: ActionMode? = null
     private var mSortId = 0
     private var mSequenceId = 0
     private var mCurrentDirectory: String? = null
@@ -29,6 +31,13 @@ class MediaFragment : Fragment(), BrowserItemListener {
     private lateinit var mRequestManager: RequestManager
     private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     private var mBrowserAdapter: BrowserAdapter? = null
+    private var mCurrentBrowserItem: BrowserItem? = null
+
+    override fun onLongClicked(browserItem: BrowserItem): Boolean {
+        mCurrentBrowserItem = browserItem
+        startActionMode()
+        return true
+    }
 
     private fun getList(
         dir: File,
@@ -51,7 +60,6 @@ class MediaFragment : Fragment(), BrowserItemListener {
                 SortDialog.SORT_BY_DEFAULT -> {
                 }
                 SortDialog.SORT_BY_NAME ->
-
                     files.sortedWith(compareBy<File> { it.isFile }.thenBy { it.name.toLowerCase() }).forEach {
                         mutableList.add(BrowserItem(it.absolutePath, it.length()))
                     }
@@ -71,7 +79,6 @@ class MediaFragment : Fragment(), BrowserItemListener {
                 SortDialog.SORT_BY_DEFAULT -> {
                 }
                 SortDialog.SORT_BY_NAME ->
-
                     files.sortedWith(compareBy<File> { it.isFile }.thenByDescending { it.name.toLowerCase() }).forEach {
                         mutableList.add(BrowserItem(it.absolutePath, it.length()))
                     }
@@ -87,9 +94,15 @@ class MediaFragment : Fragment(), BrowserItemListener {
                 }
             }
         }
-
-
         return mutableList
+    }
+
+    fun invalidateActionMode() {
+        mActionMode?.invalidate()
+    }
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        return true
     }
 
     override fun onAttach(context: Context?) {
@@ -100,6 +113,9 @@ class MediaFragment : Fragment(), BrowserItemListener {
     }
 
     override fun onClicked(browserItem: BrowserItem) {
+        mActionMode?.let {
+            invalidateActionMode()
+        }
         val intent = Intent(context, PlayerActivity::class.java)
         intent.data = File(browserItem.path).toUri()
         startActivityForResult(intent, REQUEST_VIDEO_CODE)
@@ -110,8 +126,19 @@ class MediaFragment : Fragment(), BrowserItemListener {
         setHasOptionsMenu(true)
     }
 
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        mode?.menuInflater?.inflate(R.menu.action_mode_video, menu)
+
+        return true
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_media_folder_picker, container, false)
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        mActionMode = null
+
     }
 
     override fun onDetach() {
@@ -125,14 +152,28 @@ class MediaFragment : Fragment(), BrowserItemListener {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPause() {
+        super.onPause()
+        Values.defaultPreferences.edit().putInt(KEY_SORT, mSortId).putInt(KEY_SEQUENCE, mSequenceId).putString(
+            KEY_DIRECTORY, mCurrentDirectory
+        ).apply()
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        return true
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerForContextMenu(mRecyclerView)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mSortId = Values.defaultPreferences.getInt(KEY_SORT, SortDialog.SORT_BY_DEFAULT)
         mSequenceId = Values.defaultPreferences.getInt(KEY_SEQUENCE, SortDialog.SORT_ASC)
         mCurrentDirectory =
                 Values.defaultPreferences.getString(KEY_DIRECTORY, "downloads".getExternalStorageFile().absolutePath)
-
         mEmptyView = view.findViewById(R.id.empty_view)
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.listener = object : SwipeRefreshLayout.OnRefreshListener {
@@ -150,6 +191,10 @@ class MediaFragment : Fragment(), BrowserItemListener {
             }
             mRecyclerView.adapter = mBrowserAdapter
         }
+    }
+
+    private fun refreshList(dir: File, sortId: Int, sequenceId: Int) {
+        mBrowserAdapter?.updateData(getList(dir, sortId, sequenceId))
     }
 
     private fun resumeRequestsIfNotDestroyed() {
@@ -185,26 +230,6 @@ class MediaFragment : Fragment(), BrowserItemListener {
         }
     }
 
-    private fun refreshList(dir: File, sortId: Int, sequenceId: Int) {
-
-
-        mBrowserAdapter?.updateData(getList(dir, sortId, sequenceId))
-
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Values.defaultPreferences.edit().putInt(KEY_SORT, mSortId).putInt(KEY_SEQUENCE, mSequenceId).putString(
-            KEY_DIRECTORY, mCurrentDirectory
-        ).apply()
-    }
-
     private fun showSortDialog() {
         activity?.let {
             val fragmentManager = it.supportFragmentManager
@@ -224,6 +249,26 @@ class MediaFragment : Fragment(), BrowserItemListener {
                 }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterForContextMenu(mRecyclerView)
+    }
+
+    fun startActionMode() {
+        activity?.let {
+            val appActivity = it as AppCompatActivity
+            mActionMode = appActivity.startSupportActionMode(this)
+        }
+    }
+
+    fun stopActionMode() {
+        mActionMode?.let {
+            it.finish()
+            onDestroyActionMode(it)
+        }
+    }
+
 
     companion object {
         private val SCROLL_THRESHOLD = 30

@@ -63,7 +63,13 @@ class BrowserActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-
+        item.setChecked(true)
+        mDrawerLayout.closeDrawers()
+        when (item.itemId) {
+            R.id.action_media_fragment -> mNavController.navigate(R.id.defaultFragment)
+            R.id.action_browser_fragment -> mNavController.navigate(R.id.fileFragment)
+            else -> mNavController.navigate(R.id.defaultFragment)
+        }
         return true
     }
 

@@ -3,4 +3,5 @@
     <dimen name="exo_media_button_height">52dp</dimen>
     <dimen name="default_divider_padding">10dp</dimen>
     <dimen name="md_bottom_margin">5dp</dimen>
+    <dimen name="half_default_margin">4dp</dimen>
 </resources>

@@ -3,7 +3,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_graph"
-            app:startDestination="@id/defaultFragment">
+            app:startDestination="@id/fileFragment">
 
 
     <fragment
@@ -13,4 +13,10 @@
             tools:layout="@layout/fragment_media_folder_picker">
     </fragment>
 
+    <fragment
+            android:id="@+id/fileFragment"
+            android:name="euphoria.psycho.browser.BrowserFragment"
+            android:label="文件浏览器"
+            tools:layout="@layout/fragment_media_folder_picker">
+    </fragment>
 </navigation>
