@@ -8,7 +8,6 @@ import android.graphics.Shader
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.os.Build
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation

@@ -4,19 +4,9 @@
     <group android:checkableBehavior="single">
 
         <item
-                android:id="@+id/action_media_fragment"
-                android:icon="@drawable/ic_android_black_24dp"
-                android:title="Android"/>
+                android:id="@+id/action_fragment_translator"
+                android:title="Translator"/>
 
-        <item
-                android:id="@+id/action_browser_fragment"
-                android:icon="@drawable/ic_attach_money_black_24dp"
-                android:title="Dollar"/>
-
-        <item
-                android:id="@+id/third"
-                android:icon="@drawable/ic_save_black_24dp"
-                android:title="Save"/>
 
     </group>
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="translatePhoto">拍照翻译</string>
+    <string name="translateVoice">语音翻译</string>
+</resources>

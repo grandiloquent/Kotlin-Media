@@ -15,6 +15,7 @@ fun Long.formatSize(): String {
     val digitGroups = (Math.log10(toDouble()) / Math.log10(1024.0)).toInt()
     return "${DecimalFormat("#,##0.#").format(this / Math.pow(1024.0, digitGroups.toDouble()))} ${units[digitGroups]}"
 }
+
 fun Long.getStringForTime(builder: StringBuilder, formatter: Formatter): String {
     var timeMs = this
     if (timeMs == TIME_UNSET) {
@@ -30,6 +31,11 @@ fun Long.getStringForTime(builder: StringBuilder, formatter: Formatter): String 
     else
         formatter.format("%02d:%02d", minutes, seconds).toString()
 }
+
+fun Long.formatForCount(): String {
+    return this.toString() + " 个"
+}
+
 fun Long.usToMs(): Long {
     return if (this == TIME_UNSET || this == TIME_END_OF_SOURCE) this else this / 1000
 }

@@ -2,11 +2,8 @@ package  euphoria.psycho.common
 
 import android.net.Uri
 import android.text.TextUtils
-import euphoria.psycho.common.isVideoFast
 import java.io.File
 import java.io.FileNotFoundException
-import java.io.FilenameFilter
-import java.util.*
 
 private fun buildFile(parent: File, name: String, ext: String?): File {
     return if (TextUtils.isEmpty(ext)) {

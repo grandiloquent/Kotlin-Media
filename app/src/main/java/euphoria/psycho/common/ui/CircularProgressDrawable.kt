@@ -1,13 +1,12 @@
 package euphoria.psycho.common.ui
-import android.graphics.*
-import android.view.animation.Interpolator
-import android.view.animation.LinearInterpolator
 import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.*
 import android.graphics.drawable.Drawable
-import android.graphics.ColorFilter
-import android.animation.ValueAnimator
+import android.view.animation.LinearInterpolator
+
 class CircularProgressDrawable(context: Context) : Drawable() {
     private val LINEAR_INTERPOLATOR = LinearInterpolator()
     private val MATERIAL_INTERPOLATOR = FastOutSlowInInterpolator()

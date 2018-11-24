@@ -2,9 +2,6 @@
 package euphoria.psycho.common;
 
 import android.util.Log;
-import euphoria.psycho.common.Future;
-import euphoria.psycho.common.FutureListener;
-import euphoria.psycho.common.PriorityThreadFactory;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;

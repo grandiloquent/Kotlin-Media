@@ -1,12 +1,15 @@
-package com.euphoria.psycho.elf.common
+package  euphoria.psycho.common
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
+import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.core.content.ContextCompat
 
 fun Activity.calculateScreenOrientation(): Int {
     val displayRotation = getDisplayRotation()
@@ -22,6 +25,29 @@ fun Activity.calculateScreenOrientation(): Int {
         return if (standard) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
     }
 }
+
+fun AppCompatActivity.checkPermissions(
+    permissions: Array<String>,
+    savedInstanceState: Bundle?,
+    through: ((Bundle?) -> Unit)?,
+    requestCode: Int = 100
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+        if (!permissions.all {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        ) {
+
+            requestPermissions(permissions, requestCode)
+
+        } else through?.invoke(savedInstanceState)
+    } else through?.invoke(savedInstanceState)
+}
+
 fun Activity.getDisplayRotation(): Int {
     val rotation = windowManager.defaultDisplay.rotation
     return when (rotation) {
@@ -32,6 +58,7 @@ fun Activity.getDisplayRotation(): Int {
         else -> 0
     }
 }
+
 fun AppCompatActivity.hideSystemUI(toggleActionBarVisibility: Boolean) {
     if (toggleActionBarVisibility) {
         supportActionBar?.hide()
@@ -44,11 +71,13 @@ fun AppCompatActivity.hideSystemUI(toggleActionBarVisibility: Boolean) {
             View.SYSTEM_UI_FLAG_FULLSCREEN or
             View.SYSTEM_UI_FLAG_IMMERSIVE
 }
+
 fun AppCompatActivity.removeFragmentByTag(tag: String) {
     supportFragmentManager.findFragmentByTag(tag)?.let {
         supportFragmentManager.beginTransaction().remove(it).commit()
     }
 }
+
 fun AppCompatActivity.showSystemUI(toggleActionBarVisibility: Boolean) {
     if (toggleActionBarVisibility) {
         supportActionBar?.show()

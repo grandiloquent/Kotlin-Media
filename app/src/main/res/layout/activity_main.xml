@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<euphoria.psycho.media.HackyDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<euphoria.psycho.common.ui.HackyDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                          xmlns:app="http://schemas.android.com/apk/res-auto"
                                          xmlns:tools="http://schemas.android.com/tools"
-                                         android:id="@+id/drawer_layout"
+                                         android:id="@+id/uiHackyDrawerLayout"
                                          android:layout_width="match_parent"
                                          android:layout_height="match_parent"
-                                         tools:context=".BrowserActivity">
+                                         tools:context="euphoria.psycho.MainActivity">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -13,14 +13,14 @@
             android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/uiToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <fragment
-                android:id="@+id/nav_host_fragment"
+                android:id="@+id/uiNavHostFragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -30,7 +30,7 @@
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigationView"
+            android:id="@+id/uiNavigationView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
@@ -38,4 +38,4 @@
             app:headerLayout="@layout/header_layout"
             app:menu="@menu/drawer_menu"/>
 
-</euphoria.psycho.media.HackyDrawerLayout>
+</euphoria.psycho.common.ui.HackyDrawerLayout>

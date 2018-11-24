@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:background="@color/white"
+                android:paddingLeft="@dimen/page_margin_default"
+                android:paddingRight="@dimen/page_margin_default"
+                android:layout_height="48.0dip"
+                android:layout_width="match_parent">
+    <TextView android:id="@+id/uiTextViewSourceLanguage" android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/txt_L1_english"
+              android:textColor="@color/lex_prop_title"
+              android:gravity="center"
+              android:layout_toLeftOf="@id/uiImageViewSwitcher"
+              android:layout_centerVertical="true"
+              android:text="语言自动检测"/>
+    <ImageView
+            android:id="@+id/uiImageViewSwitcher"
+            android:layout_width="40.0dip"
+            android:layout_height="20.0dip"
+            android:src="@drawable/exchange"
+            android:paddingLeft="8.0dip"
+            android:paddingRight="8.0dip"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"/>
+    <TextView android:id="@+id/uiTextViewTargetLanguage" android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/txt_L1_english"
+              android:textColor="@color/lex_prop_title"
+              android:gravity="center"
+              android:layout_centerVertical="true"
+              android:layout_toRightOf="@id/uiImageViewSwitcher"
+              android:text="简体中文"/>
+</RelativeLayout>
