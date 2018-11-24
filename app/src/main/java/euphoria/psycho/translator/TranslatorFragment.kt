@@ -34,12 +34,17 @@ class TranslatorFragment : Fragment() {
     private var mSourceLanguage = LANGUAGE_AUTO
     private lateinit var mHandlerThread: HandlerThread
     private lateinit var mHandler: Handler
+
+    private val mUiHandler = Handler()
+
     private val mHandlerCallback = Handler.Callback { message ->
         when (message.what) {
             MSG_QUERY -> {
-                showLoadingDialog()
+
                 query(message.obj as String)
-                dismissLoadingDialog()
+                mUiHandler.post {
+                    dismissLoadingDialog()
+                }
             }
         }
         true
@@ -51,6 +56,8 @@ class TranslatorFragment : Fragment() {
         uiEditText.apply {
             isClickable = true
             isEnabled = true
+            isFocusableInTouchMode = true
+            requestFocus()
         }
     }
 
@@ -99,7 +106,9 @@ class TranslatorFragment : Fragment() {
         uiTextViewTranslatePhoto.setOnClickListener {
             val str = uiEditText.text
             if (!str.isNullOrBlank()) {
+                showLoadingDialog()
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, str.toString()))
+                //                 dismissLoadingDialog()
             }
         }
         uiImageViewTranslateVoiceCopy.setOnClickListener {

@@ -3,9 +3,14 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/nav_graph"
-            app:startDestination="@id/fragment_translator">
+            app:startDestination="@id/fragment_explorer">
 
-
+    <fragment
+            android:id="@+id/fragment_explorer"
+            android:name="euphoria.psycho.explorer.ExplorerFragment"
+            android:label="@string/fragment_translator"
+            tools:layout="@layout/fragment_translate">
+    </fragment>
     <fragment
             android:id="@+id/fragment_translator"
             android:name="euphoria.psycho.translator.TranslatorFragment"

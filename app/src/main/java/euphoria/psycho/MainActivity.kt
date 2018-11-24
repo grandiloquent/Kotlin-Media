@@ -70,6 +70,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.action_fragment_translator ->
                 mNavController.navigate(R.id.fragment_translator)
+            R.id.action_language_zh
+            -> mNavController.navigate(R.id.fragment_explorer)
         }
         return true
     }

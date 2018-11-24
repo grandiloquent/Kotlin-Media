@@ -6,7 +6,8 @@
         <item
                 android:id="@+id/action_fragment_translator"
                 android:title="Translator"/>
-
+        <item android:id="@+id/action_fragment_explorer"
+              android:title="Explorer"/>
 
     </group>
 

@@ -1,5 +1,7 @@
 package euphoria.psycho.explorer
 
-class ExplorerItem {
-
-}
+class ExplorerItem(
+    var fullName: String,
+    var isFile: Boolean,
+    var size: Long
+)
