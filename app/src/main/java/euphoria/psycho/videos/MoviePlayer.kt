@@ -21,7 +21,7 @@ import euphoria.psycho.common.isMediaKey
 
 
 open class MoviePlayer(
-    private val rootView: View,
+    private val rootView: ViewGroup,
     private val activity: MovieActivity,
     videoUri: Uri,
     saveInstance: Bundle?,
@@ -54,10 +54,11 @@ open class MoviePlayer(
     }
 
     init {
-        mController.apply {
-            (rootView as ViewGroup).addView(view)
-            setListener(this@MoviePlayer)
-            setCanReplay(canReplay)
+
+        mController.let {
+            rootView.addView(it.view)
+            it.setListener(this)
+            it.setCanReplay(canReplay)
         }
         mVideoView.apply {
             setOnErrorListener(this@MoviePlayer)

@@ -4,6 +4,6 @@
           android:icon="@drawable/ic_menu_share_holo_light"
           android:title="@string/share"
           android:enabled="true"
-          app:actionProviderClass="android.widget.ShareActionProvider"
+
           app:showAsAction="ifRoom"/>
 </menu>

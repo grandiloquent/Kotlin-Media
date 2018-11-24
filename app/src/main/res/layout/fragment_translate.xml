@@ -34,7 +34,7 @@
                     android:lineSpacingExtra="2.0dip"
                     android:inputType="textMultiLine"/>
             <ImageView
-                    android:id="@+id/uiImageViewClear"
+                    android:id="@+id/uiClear"
                     android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,10 +94,14 @@
         <View android:background="#ffebebeb"
               android:layout_width="fill_parent"
               android:layout_height="0.5dip"/>
-        <LinearLayout android:layout_gravity="center_horizontal"
-                      android:orientation="vertical"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"/>
+        <LinearLayout
+                android:id="@+id/uiProgressContainer"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="vertical"
                       android:background="@drawable/border_topbar_white"

@@ -10,14 +10,14 @@
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme"
                  android:name="euphoria.psycho.comm.App">
-        <activity android:name="euphoria.psycho.MainActivity">
+        <activity android:name="euphoria.psycho.MainActivity" android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
         <activity android:name=".MovieActivity"
-
+                  android:theme="@style/AppTheme.Movie"
                   android:configChanges="orientation|keyboardHidden|screenSize">
 
             <intent-filter>
@@ -101,6 +101,6 @@
                 <data android:mimeType="application/x-mpegurl"/>
             </intent-filter>
         </activity>
--->
+    -->
     </application>
 </manifest>

@@ -38,6 +38,7 @@ class Bookmarker(private val context: Context) {
                 BOOKMARK_CACHE_MAX_BYTES, BOOKMARK_CACHE_VERSION
             )
             val data = cache.lookup(uri.hashCode().toLong())
+            if (data == null) return null
             val dataInputStream = DataInputStream(ByteArrayInputStream(data))
             val uriString = DataInputStream.readUTF(dataInputStream)
             if (!uriString.equals(uri.toString())) return null

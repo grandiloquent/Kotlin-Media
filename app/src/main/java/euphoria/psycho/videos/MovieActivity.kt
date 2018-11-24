@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.widget.RelativeLayout
 import android.widget.ShareActionProvider
 import androidx.appcompat.app.AppCompatActivity
 import euphoria.psycho.common.ApiHelper
@@ -40,7 +41,7 @@ class MovieActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_ACTION_BAR)
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
         setContentView(R.layout.movie_view)
-        val rootView = findViewById<View>(R.id.movie_view_root)
+        val rootView = findViewById<RelativeLayout>(R.id.movie_view_root)
         setSystemUiVisibility(rootView)
         initializeActionBar(intent)
         mFinishOnCompletion = intent.getBooleanExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true)
@@ -73,11 +74,11 @@ class MovieActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.movie, menu)
-        val shareItem = menu.findItem(R.id.action_share)
-        if (ContentResolver.SCHEME_CONTENT.equals(mUri?.scheme)) {
-            shareItem.show()
-            (shareItem.actionProvider as ShareActionProvider).setShareIntent(createShareIntent())
-        } else shareItem.hide()
+//        val shareItem = menu.findItem(R.id.action_share)
+//        if (ContentResolver.SCHEME_CONTENT.equals(mUri?.scheme)) {
+//            shareItem.show()
+//            (shareItem.actionProvider as ShareActionProvider).setShareIntent(createShareIntent())
+//        } else shareItem.hide()
         return true
     }
 

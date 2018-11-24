@@ -31,6 +31,12 @@
     <dimen name="page_margin_L4">4.0dip</dimen>
     <string name="translationResultTitle">译文</string>
     <color name="line_dotted">#ffebebeb</color>
+    <dimen name="iv_width_L1">24.0dip</dimen>
+    <dimen name="iv_height_L1">24.0dip</dimen>
+    <string name="Loading">Loading</string>
+    <color name="txt_L2">#ff414a68</color>
+    <dimen name="txt_L2_chinese">14.0dip</dimen>
+
     <string name="translationEditHint">Enter or paste words or sentences to translate.</string>
     <declare-styleable name="AppBarView"><!-- Maximum number of tabs to show on the app bar -->
         <attr name="max_tabs" format="integer"/>
