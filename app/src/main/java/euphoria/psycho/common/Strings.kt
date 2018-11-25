@@ -3,13 +3,16 @@ package  euphoria.psycho.common
 import java.io.File
 import java.util.*
 
-val videoExtensions: Array<String> get() = arrayOf(".mp4", ".mkv", ".webm", ".avi", ".3gp", ".mov", ".m4v", ".3gpp")
 
 fun String.getFilenameExtension() = substring(lastIndexOf(".") + 1)
 fun String.getParentFilePath() = substringBeforeLast('/')
 fun String.getFilenameFromPath() = substring(lastIndexOf("/") + 1)
 fun String.isVideoSlow() = isVideoFast() || getMimeType().startsWith("video")
 fun String.isVideoFast() = videoExtensions.any { endsWith(it, true) }
+fun String.isAudioFast() = audioExtensions.any { endsWith(it, true) }
+fun String.isPhotoFast() = photoExtensions.any { endsWith(it, true) }
+fun String.isAchieveFast() = achieveExtensions.any { endsWith(it, true) }
+fun String.isPlainTextFast() = plainTextExtensions.any { endsWith(it, true) }
 
 fun String.getMimeType(): String {
     val typesMap = HashMap<String, String>().apply {

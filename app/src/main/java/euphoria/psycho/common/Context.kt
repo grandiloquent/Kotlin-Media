@@ -11,6 +11,8 @@ import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.util.DisplayMetrics
+
 
 fun Context.getPackageIcon(): Drawable? {
     try {
@@ -19,6 +21,14 @@ fun Context.getPackageIcon(): Drawable? {
         return null
     }
 
+}
+
+fun Context.dp2px(dp: Float): Float {
+    return dp * (resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+}
+
+fun Context.px2dp(px: Float): Float {
+    return px / (resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
 }
 
 fun Context.getDefaultSharedPreferences(): SharedPreferences {
