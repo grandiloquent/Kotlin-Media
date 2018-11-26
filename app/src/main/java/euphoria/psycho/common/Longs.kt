@@ -1,9 +1,19 @@
 package euphoria.psycho.common
 
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
+
+private val sb by lazy {
+    StringBuilder()
+}
+private val format by lazy {
+    (NumberFormat.getInstance(Locale.US) as DecimalFormat).also {
+        it.applyPattern("00")
+    }
+}
 
 fun Long.contrain(minValue: Long, maxValue: Long) = max(minValue, min(this, maxValue))
 
@@ -43,4 +53,39 @@ fun Long.usToMs(): Long {
 fun Long.clamp(min: Long, max: Long): Long {
     if (this > max) return max
     return if (this < min) min else this
+}
+
+fun Long.millisToString(): String {
+    return millisToString(false, true)
+}
+
+fun Long.millisToString(text: Boolean, seconds: Boolean): String {
+    var millis = this
+    sb.setLength(0)
+    if (millis < 0) {
+        millis = -millis
+        sb.append("-")
+    }
+
+    millis /= 1000
+    val sec = (millis % 60).toInt()
+    millis /= 60
+    val min = (millis % 60).toInt()
+    millis /= 60
+    val hours = millis.toInt()
+
+    if (text) {
+        if (hours > 0)
+            sb.append(hours).append('h')
+        if (min > 0)
+            sb.append(min).append("min")
+        if ((seconds || sb.length === 0) && sec > 0)
+            sb.append(sec).append("s")
+    } else {
+        if (hours > 0)
+            sb.append(hours).append(':').append(format.format(min)).append(':').append(format.format(sec))
+        else
+            sb.append(min).append(':').append(format.format(sec))
+    }
+    return sb.toString()
 }

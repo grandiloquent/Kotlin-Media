@@ -2,6 +2,7 @@ package euphoria.psycho.common
 
 import android.graphics.Color
 import android.view.KeyEvent
+import androidx.fragment.app.Fragment
 
 
 private fun convert8BitToLuminanceComponent(component: Double): Double {
@@ -12,6 +13,10 @@ private fun convert8BitToLuminanceComponent(component: Double): Double {
     } else {
         Math.pow((component + 0.055) / 1.055, 2.4)
     }
+}
+
+fun Int?.getLong(): Long {
+    return this?.toLong() ?: 0L
 }
 
 fun Int.isMediaKey(): Boolean {

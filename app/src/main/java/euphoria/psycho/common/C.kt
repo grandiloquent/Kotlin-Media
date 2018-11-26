@@ -1,5 +1,7 @@
 package  euphoria.psycho.common
 
+import android.os.Build
+
 
 const val TIME_UNSET = Long.MIN_VALUE + 1
 const val SORT_BY_ARTIST = 4096
@@ -18,6 +20,7 @@ const val SORT_BY_TITLE = 2048
 const val SORT_DESCENDING = 1024
 const val SORT_ASC = 1
 const val SORT_DESC = 2
+const val MIMETYPE_TEXT_SUBRIP = "application/x-subrip"
 const val TIME_END_OF_SOURCE = java.lang.Long.MIN_VALUE
 val photoExtensions: Array<String> get() = arrayOf(".jpg", ".png", ".jpeg", ".bmp", ".webp")
 val audioExtensions: Array<String> get() = arrayOf(".mp3", ".wav", ".wma", ".ogg", ".m4a", ".opus", ".flac", ".aac")
@@ -25,3 +28,9 @@ val rawExtensions: Array<String> get() = arrayOf(".dng", ".orf", ".nef")
 val videoExtensions: Array<String> get() = arrayOf(".mp4", ".mkv", ".webm", ".avi", ".3gp", ".mov", ".m4v", ".3gpp")
 val achieveExtensions: Array<String> get() = arrayOf(".zip", ".rar", ".7z")
 val plainTextExtensions: Array<String> get() = arrayOf(".txt", ".html", ".log", ".css")
+
+object C {
+    const val INDEX_UNSET = -1
+    const val TIME_UNSET = Long.MIN_VALUE + 1
+
+}

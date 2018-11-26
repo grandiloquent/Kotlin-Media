@@ -2,6 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <bool name="forward_content_browse_enabled">false</bool>
     <color name="album_art_scrim">#000000</color>
+    <color name="border_topbar_L2">#ffe6ecf3</color>
     <color name="browse_playback_bg">@android:color/black</color>
     <color name="car_card_ripple_background_light">#3dffffff</color>
     <color name="colorAccent">#FF4081</color>
@@ -13,31 +14,17 @@
     <color name="gray">#666666</color>
     <color name="layout_background">#ff00a89d</color>
     <color name="lex_prop_title">#ff333333</color>
-    <color name="page_background">#fff5f6fa</color>
-    <color name="transparent_black">#94333232</color>
-    <color name="violet">#912699</color>
-    <color name="border_topbar_L2">#ffe6ecf3</color>
-    <color name="white">#ffffff</color>
-    <dimen name="page_margin_L1">12.0dip</dimen>
-    <color name="translateVoiceTextColor">#ff0079de</color>
-    <color name="translateVoiceBg">#ffecf4fd</color>
-    <string name="translateVoice">voice translate</string>
-    <string name="translatePhoto">photo translate</string>
-    <color name="txt_L1">#ff161a2a</color>
-    <color name="txt_disabled">#ffb1b8d0</color>
-    <dimen name="txt_L1_chinese">16.0dip</dimen>
-    <color name="sentenceHistoryColor">#ff999999</color>
-    <dimen name="page_margin_L2">8.0dip</dimen>
-    <dimen name="page_margin_L4">4.0dip</dimen>
-    <string name="translationResultTitle">译文</string>
     <color name="line_dotted">#ffebebeb</color>
-    <dimen name="iv_width_L1">24.0dip</dimen>
-    <dimen name="iv_height_L1">24.0dip</dimen>
-    <string name="Loading">Loading</string>
+    <color name="page_background">#fff5f6fa</color>
+    <color name="sentenceHistoryColor">#ff999999</color>
+    <color name="translateVoiceBg">#ffecf4fd</color>
+    <color name="translateVoiceTextColor">#ff0079de</color>
+    <color name="transparent_black">#94333232</color>
+    <color name="txt_disabled">#ffb1b8d0</color>
+    <color name="txt_L1">#ff161a2a</color>
     <color name="txt_L2">#ff414a68</color>
-    <dimen name="txt_L2_chinese">14.0dip</dimen>
-
-    <string name="translationEditHint">Enter or paste words or sentences to translate.</string>
+    <color name="violet">#912699</color>
+    <color name="white">#ffffff</color>
     <declare-styleable name="AppBarView"><!-- Maximum number of tabs to show on the app bar -->
         <attr name="max_tabs" format="integer"/>
     </declare-styleable>
@@ -77,6 +64,21 @@
     <declare-styleable name="ColumnCardView"><!-- The number of columns that this ColumnCardView should span across. This value will
              determine the width of the card. -->
         <attr format="integer" name="columnSpan"/>
+    </declare-styleable>
+    <declare-styleable name="DefaultTimeBar">
+        <attr name="bar_height" format="dimension"/>
+        <attr name="touch_target_height" format="dimension"/>
+        <attr name="ad_marker_width" format="dimension"/>
+        <attr name="scrubber_enabled_size" format="dimension"/>
+        <attr name="scrubber_disabled_size" format="dimension"/>
+        <attr name="scrubber_dragged_size" format="dimension"/>
+        <attr name="scrubber_drawable" format="reference"/>
+        <attr name="played_color" format="color"/>
+        <attr name="scrubber_color" format="color"/>
+        <attr name="buffered_color" format="color"/>
+        <attr name="unplayed_color" format="color"/>
+        <attr name="ad_marker_color" format="color"/>
+        <attr name="played_ad_marker_color" format="color"/>
     </declare-styleable>
     <declare-styleable name="DrawerArrowDrawable"><!-- The color of the arrow. -->
         <attr format="color" name="carArrowColor"/><!-- Whether the arrow will animate when switches directions. -->
@@ -176,9 +178,21 @@
     </declare-styleable>
     <dimen name="car_app_bar_height">80dp</dimen>
     <dimen name="car_padding_4">20dp</dimen>
+    <dimen name="dp4">4.0dip</dimen>
+    <dimen name="exo_media_button_width">71dp</dimen>
+    <dimen name="exo_media_button_height">52dp</dimen>
+    <dimen name="exo_play_button_height">36.0dip</dimen>
+    <dimen name="exo_play_button_width">36.0dip</dimen>
+    <dimen name="iv_height_L1">24.0dip</dimen>
+    <dimen name="iv_width_L1">24.0dip</dimen>
     <dimen name="page_margin_default">16.0dip</dimen>
+    <dimen name="page_margin_L1">12.0dip</dimen>
+    <dimen name="page_margin_L2">8.0dip</dimen>
+    <dimen name="page_margin_L4">4.0dip</dimen>
     <dimen name="statusbar_view_height">0.0dip</dimen>
+    <dimen name="txt_L1_chinese">16.0dip</dimen>
     <dimen name="txt_L1_english">18.0dip</dimen>
+    <dimen name="txt_L2_chinese">14.0dip</dimen>
     <integer name="app_selector_fade_duration">500
     </integer>
     <integer name="new_album_art_fade_in_duration">250</integer>
@@ -194,15 +208,32 @@
     <string name="accessibility_time_bar">Video player time bar</string>
     <string name="details_hms">%1$d:%2$02d:%3$02d</string>
     <string name="details_ms">%1$02d:%2$02d</string>
+    <string name="exo_controls_fastforward_description">Fast forward</string>
+    <string name="exo_controls_next_description">Next track</string>
+    <string name="exo_controls_pause_description">Pause</string>
+    <string name="exo_controls_play_description">Play</string>
+    <string name="exo_controls_previous_description">Previous track</string>
+    <string name="exo_controls_repeat_all_description">Repeat all</string>
+    <string name="exo_controls_repeat_off_description">Repeat none</string>
+    <string name="exo_controls_repeat_one_description">Repeat one</string>
+    <string name="exo_controls_rewind_description">Rewind</string>
+    <string name="exo_controls_shuffle_description">Shuffle</string>
+    <string name="exo_controls_stop_description">Stop</string>
+    <string name="explorer">Explorer</string>
     <string name="fragment_translator">Translator</string>
     <string name="header_subtitle_gallery">Videos and Photos in the directory</string>
     <string name="header_title_gallery">Gallery</string>
+    <string name="Loading">Loading</string>
     <string name="loading_video">Loading video\u2026</string>
     <string name="resume_playing_message">Resume playing from %s ?</string>
     <string name="resume_playing_restart">Start over</string>
     <string name="resume_playing_resume">Resume playing</string>
     <string name="resume_playing_title">Resume video</string>
     <string name="share">Share</string>
+    <string name="translatePhoto">photo translate</string>
+    <string name="translateVoice">voice translate</string>
+    <string name="translationEditHint">Enter or paste words or sentences to translate.</string>
+    <string name="translationResultTitle">译文</string>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar"><!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -215,4 +246,46 @@
         <item name="android:colorControlHighlight">@color/car_card_ripple_background_light</item>
         <item name="android:windowBackground">@null</item>
     </style>
+    <style name="ExoMediaButton">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_width">@dimen/exo_media_button_width</item>
+        <item name="android:layout_height">@dimen/exo_media_button_height</item>
+    </style>
+
+    <style name="ExoMediaButton.Previous">
+        <item name="android:src">@drawable/exo_controls_previous</item>
+        <item name="android:contentDescription">@string/exo_controls_previous_description</item>
+    </style>
+
+    <string name="dialog_jump_description">当前播放视频的总时长:</string>
+    <style name="ExoMediaButton.Next">
+        <item name="android:src">@drawable/exo_controls_next</item>
+        <item name="android:contentDescription">@string/exo_controls_next_description</item>
+    </style>
+
+    <style name="ExoMediaButton.FastForward">
+        <item name="android:src">@drawable/exo_controls_fastforward</item>
+        <item name="android:contentDescription">@string/exo_controls_fastforward_description</item>
+    </style>
+
+    <style name="ExoMediaButton.Rewind">
+        <item name="android:src">@drawable/exo_controls_rewind</item>
+        <item name="android:contentDescription">@string/exo_controls_rewind_description</item>
+    </style>
+
+    <style name="ExoMediaButton.Play">
+        <item name="android:src">@drawable/exo_controls_play</item>
+        <item name="android:contentDescription">@string/exo_controls_play_description</item>
+    </style>
+
+    <style name="ExoMediaButton.Pause">
+        <item name="android:src">@drawable/exo_controls_pause</item>
+        <item name="android:contentDescription">@string/exo_controls_pause_description</item>
+    </style>
+
+    <style name="ExoMediaButton.Shuffle">
+        <item name="android:src">@drawable/exo_controls_shuffle</item>
+        <item name="android:contentDescription">@string/exo_controls_shuffle_description</item>
+    </style>
+
 </resources>

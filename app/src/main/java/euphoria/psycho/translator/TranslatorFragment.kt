@@ -1,18 +1,13 @@
 package euphoria.psycho.translator
 
 import android.content.ClipData
-import android.content.ClipboardManager
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -21,7 +16,6 @@ import euphoria.psycho.common.getDefaultSharedPreferences
 import euphoria.psycho.common.getInputMethodManager
 import euphoria.psycho.common.inflate
 import euphoria.psycho.videos.R
-import kotlinx.android.synthetic.main.actionbar_translate.*
 import kotlinx.android.synthetic.main.fragment_translate.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -41,24 +35,25 @@ class TranslatorFragment : Fragment() {
         when (message.what) {
             MSG_QUERY -> {
 
+
                 query(message.obj as String)
-                mUiHandler.post {
-                    dismissLoadingDialog()
-                }
+
             }
         }
         true
     }
 
     private fun dismissLoadingDialog() {
-        uiProgressContainer.removeAllViews()
-        uiProgressContainer.visibility = View.GONE
-        uiEditText.apply {
+        progress_container.visibility = View.GONE
+        editText.apply {
             isClickable = true
             isEnabled = true
             isFocusableInTouchMode = true
             requestFocus()
+            if (!text.isNullOrBlank())
+                image_clear.visibility = View.VISIBLE
         }
+
     }
 
     private fun generateTranslateURL(str: String, targetLanguage: String, sourceLanguage: String = "auto"): String {
@@ -72,22 +67,22 @@ class TranslatorFragment : Fragment() {
         mTargetLanguage = preferences.getString(KEY_TARGET_LANGUAGE, LANGUAGE_EN)
         mSourceLanguage = preferences.getString(KEY_SOURCE_LANGUAGE, LANGUAGE_AUTO)
         when (mSourceLanguage) {
-            LANGUAGE_AUTO -> uiTextViewSourceLanguage.text = "语言自动检测"
-            LANGUAGE_EN -> uiTextViewSourceLanguage.text = "英文"
+            LANGUAGE_AUTO -> text_source.text = "语言自动检测"
+            LANGUAGE_EN -> text_source.text = "英文"
         }
         when (mTargetLanguage) {
-            LANGUAGE_EN -> uiTextViewTargetLanguage.text = "英文"
-            else -> uiTextViewTargetLanguage.text = "中文"
+            LANGUAGE_EN -> text_target.text = "英文"
+            else -> text_target.text = "中文"
         }
-        uiImageViewSwitcher.setOnClickListener {
+        image_switcher.setOnClickListener {
             val tmp = mTargetLanguage;
             mTargetLanguage = mSourceLanguage
             mSourceLanguage = tmp
-            val tmpText = uiTextViewSourceLanguage.text
-            uiTextViewSourceLanguage.text = uiTextViewTargetLanguage.text
-            uiTextViewTargetLanguage.text = tmpText;
+            val tmpText = text_source.text
+            text_source.text = text_target.text
+            text_target.text = tmpText;
         }
-        uiTextViewTargetLanguage.setOnClickListener {
+        text_target.setOnClickListener {
             PopupMenu(requireContext(), it).apply {
                 menuInflater.inflate(R.menu.menu_language, menu)
                 setOnMenuItemClickListener { item: MenuItem ->
@@ -100,28 +95,28 @@ class TranslatorFragment : Fragment() {
                 show()
             }
         }
-        uiClear.setOnClickListener {
-            uiEditText.text = null
+        image_clear.setOnClickListener {
+            editText.text = null
         }
-        uiTextViewTranslatePhoto.setOnClickListener {
-            val str = uiEditText.text
+        text_photo.setOnClickListener {
+            val str = editText.text
             if (!str.isNullOrBlank()) {
                 showLoadingDialog()
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, str.toString()))
                 //                 dismissLoadingDialog()
             }
         }
-        uiImageViewTranslateVoiceCopy.setOnClickListener {
+        image_copy.setOnClickListener {
             val clipboardManager = requireContext().getClipboardManager()
-            clipboardManager.primaryClip = ClipData.newPlainText(null, uiTextViewTranslateResult.text)
+            clipboardManager.primaryClip = ClipData.newPlainText(null, text_result.text)
             Toast.makeText(requireContext(), "复制翻译结果到剪切板", Toast.LENGTH_SHORT).show()
         }
-        uiEditText.addTextChangedListener(object : TextWatcher {
+        editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (uiEditText.text.isNullOrEmpty()) {
-                    uiClear.visibility = View.GONE
+                if (editText.text.isNullOrEmpty()) {
+                    image_clear.visibility = View.GONE
                 } else {
-                    uiClear.visibility = View.VISIBLE
+                    image_clear.visibility = View.VISIBLE
                 }
             }
 
@@ -149,6 +144,12 @@ class TranslatorFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_translate, container, false)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.action_sortby).setVisible(false)
+
+    }
+
     override fun onStop() {
         super.onStop()
         if (mHandler != null) {
@@ -174,6 +175,9 @@ class TranslatorFragment : Fragment() {
     }
 
     private fun query(str: String) {
+        mUiHandler.post {
+            showLoadingDialog()
+        }
         try {
             val url = generateTranslateURL(str, mTargetLanguage, mSourceLanguage)
             val request = Request.Builder()
@@ -184,31 +188,38 @@ class TranslatorFragment : Fragment() {
                 .build().newCall(request).execute()
             if (res.isSuccessful) {
                 res.body()?.let {
-                    uiTextViewTranslateResult.text = parseJSON(it.string())
+                    mHandler.post {
+                        text_result.text = parseJSON(it.string())
+                    }
+
                 }
             } else {
-                uiTextViewTranslateResult.text = res.message()
+                mHandler.post {
+                    text_result.text = res.message()
+                }
             }
         } catch (e: Exception) {
-            uiTextViewTranslateResult.setText(e.message)
+            mHandler.post {
+                text_result.setText(e.message)
+            }
+        }
+        mUiHandler.post {
+            dismissLoadingDialog()
         }
     }
 
     private fun showLoadingDialog() {
-        uiProgressContainer.apply {
-            if (this.childCount == 0) {
-                addView(requireContext().inflate(R.layout.actionbar_progress))
-                visibility = View.VISIBLE
-            }
-        }
-        uiEditText.apply {
+
+
+        editText.apply {
             isClickable = false
             isEnabled = false
             isFocusableInTouchMode = false
             clearFocus()
             requireContext().getInputMethodManager().hideSoftInputFromWindow(windowToken, 0)
         }
-        uiClear.visibility = View.GONE
+        image_clear.visibility = View.GONE
+        progress_container.visibility = View.VISIBLE
     }
 
     companion object {

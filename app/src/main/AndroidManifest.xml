@@ -10,7 +10,9 @@
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme"
                  android:name="euphoria.psycho.comm.App">
-        <activity android:name="euphoria.psycho.MainActivity" android:windowSoftInputMode="adjustPan">
+        <!--android:name="euphoria.psycho.MainActivity"-->
+        <activity android:name="euphoria.psycho.player.VideoPlayer" android:windowSoftInputMode="adjustPan"
+                  android:theme="@style/Theme.Design.Light">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>

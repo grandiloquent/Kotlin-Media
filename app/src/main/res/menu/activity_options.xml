@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_sortby"
+          android:title="排序"
+          android:icon="@drawable/ic_menu_sort"
+          app:showAsAction="always|collapseActionView">
+        <menu>
+            <item android:id="@+id/action_storage" android:title="Storage"/>
+            <item android:title="排序">
+                <menu>
+                    <item android:id="@+id/action_sortby_name" android:title="名称"/>
+                    <item android:id="@+id/action_sortby_size" android:title="大小"/>
+                    <item android:id="@+id/action_sortby_date" android:title="时间"/>
+                    <item android:id="@+id/action_sortby_type" android:title="类型"/>
+                </menu>
+            </item>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/action_ascending" android:title="升序"
+                      android:checked="true"/>
+                <item android:id="@+id/action_descending" android:title="降序"
+                />
+            </group>
+        </menu>
+
+    </item>
+
+</menu>

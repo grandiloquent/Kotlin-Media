@@ -1,5 +1,6 @@
 package  euphoria.psycho.common
 
+import android.os.Environment
 import java.io.File
 import java.util.*
 
@@ -13,6 +14,28 @@ fun String.isAudioFast() = audioExtensions.any { endsWith(it, true) }
 fun String.isPhotoFast() = photoExtensions.any { endsWith(it, true) }
 fun String.isAchieveFast() = achieveExtensions.any { endsWith(it, true) }
 fun String.isPlainTextFast() = plainTextExtensions.any { endsWith(it, true) }
+
+fun String.isFile(): Boolean {
+    return File(this).run {
+        exists() && isFile
+    }
+}
+
+fun String.getTime(): Long {
+    val split = this.split(':')
+    val splited = split.reversed()
+    var result = 0L
+    if (splited.size > 2) {
+        result += splited[2].toInt() * 3600000
+    }
+    if (splited.size > 1) {
+        result += splited[1].toInt() * 60000
+    }
+    if (splited.size > 0) {
+        result = splited[0].toInt() * 1000L
+    }
+    return result
+}
 
 fun String.getMimeType(): String {
     val typesMap = HashMap<String, String>().apply {
@@ -622,6 +645,10 @@ fun String.getMimeType(): String {
 fun String.getParentPath(): String {
     var parent = removeSuffix("/${getFilenameFromPath()}")
     return parent
+}
+
+fun String.getExternalStoragePath(): File {
+    return File(Environment.getExternalStorageDirectory(), this)
 }
 
 fun String.listVideoFiles(): List<File>? {

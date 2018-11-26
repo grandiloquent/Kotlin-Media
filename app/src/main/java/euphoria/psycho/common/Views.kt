@@ -10,6 +10,12 @@ fun View.visible() {
     }
 }
 
+fun View.inVisible() {
+    if (visibility != View.GONE) {
+        visibility = View.GONE
+    }
+}
+
 fun View.showViewAnimated(duration: Long) {
     if (visibility == View.VISIBLE) return
     if (!isLaidOut) {

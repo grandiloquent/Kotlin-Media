@@ -5,6 +5,50 @@ import android.text.TextUtils
 import java.io.File
 import java.io.FileNotFoundException
 
+fun File.changeExtension(extension: String): String {
+    return absolutePath.substringBeforeLast('.') + if (extension.startsWith(".")) extension else (".$extension")
+}
+
+
+fun File.combine(fileName: String): String {
+    return "$absolutePath/$fileName"
+}
+
+
+fun File.combine(vararg fileNames: String): String {
+
+    var result = "$absolutePath/"
+    for (f in fileNames) {
+        result = "$result/$f"
+    }
+    return result
+}
+
+
+fun File.getDirectoryName(): String {
+    return parentFile.absolutePath
+}
+
+
+fun File.getExtension(): String {
+    return name.substringAfterLast('.')
+}
+
+
+fun File.getFileName(): String {
+    return name
+}
+
+
+fun File.getFileNameWithoutExtension(): String {
+    return name.substringBeforeLast('.')
+}
+
+fun File.getFullPath(): String {
+    return absolutePath
+}
+
+
 private fun buildFile(parent: File, name: String, ext: String?): File {
     return if (TextUtils.isEmpty(ext)) {
         File(parent, name)
@@ -33,13 +77,6 @@ fun File.buildUniqueFileWithExtension(name: String, ext: String?): File {
     return file
 }
 
-fun File.changeExtension(ext: String): File {
-    var e = ""
-    if (ext[0] != '.') {
-        e = "."
-    }
-    return File("${absolutePath.substringBeforeLast('.')}${e}${ext}")
-}
 
 //fun File.getFileList(sort: Int = SORT_BY_NAME, bShowHidden: Boolean = true): ArrayList<FileBean>? {
 //    if (!isDirectory) return null
