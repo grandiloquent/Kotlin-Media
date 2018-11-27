@@ -65,10 +65,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             { s -> initialize(s) })
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                if (uiHackyDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    uiHackyDrawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    uiHackyDrawerLayout.openDrawer(GravityCompat.START)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        item.setChecked(true)
+        item.isChecked = true
         uiHackyDrawerLayout.closeDrawers()
         when (item.itemId) {
+
             R.id.action_fragment_translator ->
                 mNavController.navigate(R.id.fragment_translator)
             R.id.action_language_zh

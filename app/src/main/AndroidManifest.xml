@@ -11,15 +11,15 @@
                  android:theme="@style/AppTheme"
                  android:name="euphoria.psycho.comm.App">
         <!--android:name="euphoria.psycho.MainActivity"-->
-        <activity android:name="euphoria.psycho.player.VideoPlayer" android:windowSoftInputMode="adjustPan"
-                  android:theme="@style/Theme.Design.Light">
+        <activity android:name="euphoria.psycho.MainActivity" android:windowSoftInputMode="adjustPan"
+        >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MovieActivity"
-                  android:theme="@style/AppTheme.Movie"
+        <activity android:name="euphoria.psycho.player.VideoPlayer"
+                  android:theme="@style/Theme.Design.Light"
                   android:configChanges="orientation|keyboardHidden|screenSize">
 
             <intent-filter>

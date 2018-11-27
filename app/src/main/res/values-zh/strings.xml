@@ -2,4 +2,6 @@
 <resources>
     <string name="translatePhoto">拍照翻译</string>
     <string name="translateVoice">语音翻译</string>
+    <string name="menu_language_zh">中文</string>
+    <string name="menu_language_en">英语</string>
 </resources>

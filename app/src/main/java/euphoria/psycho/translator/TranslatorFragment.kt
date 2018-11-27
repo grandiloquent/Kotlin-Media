@@ -14,34 +14,19 @@ import androidx.fragment.app.Fragment
 import euphoria.psycho.common.getClipboardManager
 import euphoria.psycho.common.getDefaultSharedPreferences
 import euphoria.psycho.common.getInputMethodManager
-import euphoria.psycho.common.inflate
 import euphoria.psycho.videos.R
 import kotlinx.android.synthetic.main.fragment_translate.*
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
+
 class TranslatorFragment : Fragment() {
 
     private var mTargetLanguage = LANGUAGE_EN
     private var mSourceLanguage = LANGUAGE_AUTO
-    private lateinit var mHandlerThread: HandlerThread
-    private lateinit var mHandler: Handler
-
-    private val mUiHandler = Handler()
-
-    private val mHandlerCallback = Handler.Callback { message ->
-        when (message.what) {
-            MSG_QUERY -> {
-
-
-                query(message.obj as String)
-
-            }
-        }
-        true
-    }
 
     private fun dismissLoadingDialog() {
         progress_container.visibility = View.GONE
@@ -88,6 +73,10 @@ class TranslatorFragment : Fragment() {
                 setOnMenuItemClickListener { item: MenuItem ->
                     when (item.itemId) {
                         R.id.action_language_zh -> {
+                            mTargetLanguage = LANGUAGE_ZH
+                        }
+                        R.id.action_language_en -> {
+                            mTargetLanguage = LANGUAGE_EN
                         }
                     }
                     true
@@ -101,9 +90,14 @@ class TranslatorFragment : Fragment() {
         text_photo.setOnClickListener {
             val str = editText.text
             if (!str.isNullOrBlank()) {
-                showLoadingDialog()
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_QUERY, str.toString()))
-                //                 dismissLoadingDialog()
+                GlobalScope.launch(Dispatchers.Main) {
+                    showLoadingDialog()
+                    val result = query(editText.text.toString())
+                    text_result.text = result.await()
+                    dismissLoadingDialog()
+                }
+
+
             }
         }
         image_copy.setOnClickListener {
@@ -135,9 +129,6 @@ class TranslatorFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mHandlerThread = HandlerThread(TAG)
-        mHandlerThread.start()
-        mHandler = Handler(mHandlerThread.looper, mHandlerCallback)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -152,12 +143,8 @@ class TranslatorFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        if (mHandler != null) {
-            mHandler.removeCallbacksAndMessages(null)
-        }
-        if (mHandlerThread != null) {
-            mHandlerThread.quit()
-        }
+
+
     }
 
     private fun parseJSON(str: String): String? {
@@ -174,43 +161,37 @@ class TranslatorFragment : Fragment() {
         return null
     }
 
-    private fun query(str: String) {
-        mUiHandler.post {
-            showLoadingDialog()
-        }
-        try {
-            val url = generateTranslateURL(str, mTargetLanguage, mSourceLanguage)
-            val request = Request.Builder()
-                .url(url).build()
-            val res = OkHttpClient.Builder()
-                .connectTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
-                .readTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
-                .build().newCall(request).execute()
-            if (res.isSuccessful) {
-                res.body()?.let {
-                    mHandler.post {
-                        text_result.text = parseJSON(it.string())
-                    }
+    private fun query(str: String): Deferred<String?> {
 
+        return GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT) {
+            try {
+                val url = generateTranslateURL(str, mTargetLanguage, mSourceLanguage)
+                val request = Request.Builder()
+                    .url(url).build()
+                val res = OkHttpClient.Builder()
+                    .connectTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
+                    .readTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
+                    .build().newCall(request).execute()
+                if (res.isSuccessful) {
+                    res.body()?.let {
+                        parseJSON(it.string())
+                    }
+                } else {
+                    res.message()
                 }
-            } else {
-                mHandler.post {
-                    text_result.text = res.message()
-                }
+            } catch (e: Exception) {
+                e.message
             }
-        } catch (e: Exception) {
-            mHandler.post {
-                text_result.setText(e.message)
-            }
+
         }
-        mUiHandler.post {
-            dismissLoadingDialog()
-        }
+
+
     }
 
     private fun showLoadingDialog() {
 
-
+        image_clear.visibility = View.GONE
+        progress_container.visibility = View.VISIBLE
         editText.apply {
             isClickable = false
             isEnabled = false
@@ -218,8 +199,7 @@ class TranslatorFragment : Fragment() {
             clearFocus()
             requireContext().getInputMethodManager().hideSoftInputFromWindow(windowToken, 0)
         }
-        image_clear.visibility = View.GONE
-        progress_container.visibility = View.VISIBLE
+
     }
 
     companion object {

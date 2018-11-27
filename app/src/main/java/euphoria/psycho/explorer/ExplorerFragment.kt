@@ -14,6 +14,7 @@ import com.bumptech.glide.RequestManager
 import euphoria.psycho.common.getDefaultSharedPreferences
 import euphoria.psycho.common.isVideoFast
 import euphoria.psycho.common.ui.SwipeRefreshLayout
+import euphoria.psycho.player.VideoPlayer
 import euphoria.psycho.videos.MovieActivity
 import euphoria.psycho.videos.MoviePlayer
 import euphoria.psycho.videos.R
@@ -86,7 +87,11 @@ class ExplorerFragment : Fragment() {
                     files.sortWith(compareByDescending<File> { it.isFile }.thenByDescending { it.length() })
                 }
                 SORTBY_TYPE -> {
-                    files.sortWith(compareByDescending<File> { it.isFile }.thenByDescending { it.name.substringAfterLast('.') })
+                    files.sortWith(compareByDescending<File> { it.isFile }.thenByDescending {
+                        it.name.substringAfterLast(
+                            '.'
+                        )
+                    })
                 }
                 SORTBY_DEFAULT -> {
 
@@ -124,7 +129,7 @@ class ExplorerFragment : Fragment() {
         mExplorerAdapter.onClicked = { item ->
             if (item.isFile) {
                 if (item.fullName.isVideoFast()) {
-                    val intent = Intent(requireContext(), MovieActivity::class.java)
+                    val intent = Intent(requireContext(), VideoPlayer::class.java)
                     intent.data = Uri.fromFile(File(item.fullName))
                     intent.putExtra(Intent.EXTRA_TITLE, item.fullName.substringAfterLast('/'))
                     requireContext().startActivity(intent)
