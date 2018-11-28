@@ -11,7 +11,8 @@
                  android:theme="@style/AppTheme"
                  android:name="euphoria.psycho.comm.App">
         <!--android:name="euphoria.psycho.MainActivity"-->
-        <activity android:name="euphoria.psycho.MainActivity" android:windowSoftInputMode="adjustPan"
+        <activity android:name="euphoria.psycho.MainActivity"
+                  android:windowSoftInputMode="adjustPan"
         >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>

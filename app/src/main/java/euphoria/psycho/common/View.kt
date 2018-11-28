@@ -1,13 +1,34 @@
 package euphoria.psycho.common
 
+/*
+*
+* https://developer.android.com/reference/android/view/View
+*
+ */
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.util.Log
 import android.view.View
+
+private const val TAG = "common/View"
 
 fun View.visible() {
     if (visibility != View.VISIBLE) {
         visibility = View.VISIBLE
     }
+}
+
+fun View.setSystemUiVisibilityCompat() {
+    try {
+        View::class.java.getDeclaredField("SYSTEM_UI_FLAG_LAYOUT_STABLE")
+        systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
+    } catch (ignored: Exception) {
+        Log.e(TAG, "[setSystemUiVisibilityCompat] ${ignored.message}")
+    }
+
+
 }
 
 fun View.inVisible() {

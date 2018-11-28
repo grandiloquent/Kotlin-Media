@@ -6,7 +6,7 @@ import java.util.*
 
 
 fun String.getFilenameExtension() = substring(lastIndexOf(".") + 1)
-fun String.getParentFilePath() = substringBeforeLast('/')
+
 fun String.getFilenameFromPath() = substring(lastIndexOf("/") + 1)
 fun String.isVideoSlow() = isVideoFast() || getMimeType().startsWith("video")
 fun String.isVideoFast() = videoExtensions.any { endsWith(it, true) }

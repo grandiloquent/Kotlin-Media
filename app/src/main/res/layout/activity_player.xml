@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/frame_root"
+             android:layout_height="match_parent"
              android:layout_width="match_parent">
     <SurfaceView android:layout_width="match_parent" android:layout_height="match_parent"
                  android:id="@+id/surface_view"/>
@@ -22,15 +24,10 @@
                 android:gravity="center"
                 android:paddingTop="4dp"
                 android:orientation="horizontal">
-            <ImageButton android:id="@+id/image_prev"
-                         style="@style/ExoMediaButton.Previous"/>
-            <ImageButton android:id="@+id/image_play"
-                         style="@style/ExoMediaButton.Play"
-                         android:visibility="gone"/>
-            <ImageButton android:id="@+id/image_pause"
-                         style="@style/ExoMediaButton.Pause"/>
-            <ImageButton android:id="@+id/image_next"
-                         style="@style/ExoMediaButton.Next"/>
+
+            <ImageButton android:id="@+id/image_prev" style="@android:style/MediaButton.Previous"/>
+            <ImageButton android:id="@+id/image_pause" style="@android:style/MediaButton.Play"/>
+            <ImageButton android:id="@+id/image_next" style="@android:style/MediaButton.Next"/>
         </LinearLayout>
         <LinearLayout
                 android:layout_width="match_parent"
