@@ -1,13 +1,17 @@
 package euphoria.psycho.player
 
-import android.media.*
+import android.media.AudioManager
+import android.media.MediaFormat
+import android.media.MediaPlayer
+import android.media.TimedText
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import euphoria.psycho.common.*
@@ -15,57 +19,63 @@ import euphoria.psycho.videos.R
 import kotlinx.android.synthetic.main.activity_player.*
 import java.io.File
 import java.io.FileFilter
-import java.lang.Exception
-import java.lang.StringBuilder
+import java.text.Collator
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
-import kotlin.math.round
+
 
 class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnErrorListener,
     MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnTimedTextListener,
     TimeBar.OnScrubListener,
     MediaPlayer.OnSeekCompleteListener {
 
+    /*
+    https://developer.android.com/reference/android/media/MediaPlayer.html
+     */
 
     private lateinit var mAudioManager: AudioManager
+    private val mStringBuilder = StringBuilder()
+    private val mFormatter = Formatter(mStringBuilder, Locale.getDefault())
+    private val mHandler = Handler()
+    private val mPlayList = ArrayList<String>()
     private val mScreen = DisplayMetrics()
     private var mAudioMax = 0
     private var mCurrentPath: String? = null
+    private var mCurrentPosition = 0
     private var mCurrentState = STATE_IDLE
-    private var mFov = 0f
-    private var mInitTouchY = 0f
+    private var mDragging = false
+    private var mHasPaused = false
+    private var mMaxVolume = 0
     private var mMediaPlayer: MediaPlayer? = null
+    private var mRealHeight = 0
     private var mSurfaceHeight = 0
     private var mSurfaceWidth = 0
     private var mSurfaceYDisplayRange = 0
     private var mTargetState = STATE_IDLE
-    private var mTouchAction = TOUCH_NONE
-    private var mTouchX = -1f
-    private var mTouchY = -1f
+    private var mThreshold = 0
     private var mVideoHeight = 0
     private var mVideoWidth = 0
-    private var mVol = 0f
-    private var mHasPaused = false
-    private var mCurrentPosition = 0
-    private var mDragging = false
-    private val mStringBuilder = StringBuilder()
-    private val mFormatter = Formatter(mStringBuilder, Locale.getDefault())
-    private val mHandler = Handler()
-    private var mRealHeight = 0
-    private val mPlayList = ArrayList<String>()
+    private var mSeekEndOffset = 0
+    private var mIsFullScreen = false
+    private var mTouchX = -1f
+    private var mTouchY = -1f
+    private var mInitTouchY = 0f
+    private var mTouchAction = TOUCH_IGNORE
+    private var mSubTitleHandler = Handler()
+
 
     private val mProgressBarChecker = Runnable {
-        postProgressCheck()
+        scheduleUpdateProgress()
     }
+    private val mUiChecker = Runnable { hideUi() }
 
-    private fun setupPlaylist(dir: String) {
-        val directory = File(dir.substringBeforeLast('/'))
-        if (!directory.isDirectory) return
-        val files = directory.listFiles(FileFilter { it.isFile && it.name.isVideoFast() })
-        if (files == null) return
-        files.forEach { mPlayList.add(it.absolutePath) }
 
+    private fun hideUi() {
+        linear_controller.inVisible()
+        hideSystemUI(true)
+        mHandler.removeCallbacks(mProgressBarChecker)
+        mIsFullScreen = false
     }
 
     private fun initialize() {
@@ -86,7 +96,7 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
             }).first()
             mCurrentPath = mp4File.absolutePath
         }
-        setupToolBar(mCurrentPath?.getFilenameFromPath())
+        setupVariables()
         setupSurfaceView()
         setupControls()
         start()
@@ -101,16 +111,44 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
                 mCurrentState != STATE_PREPARING
     }
 
+    private fun jumpToNext(bNext: Boolean = false) {
+        if (bNext) {
+            val position = mPlayList.indexOf(mCurrentPath)
+            if (position + 1 >= mPlayList.size) return
+            mCurrentPath = mPlayList[position + 1]
+        } else {
+            val position = mPlayList.indexOf(mCurrentPath)
+            if (position - 1 < 0) return
+            mCurrentPath = mPlayList[position - 1]
+        }
+        mMediaPlayer?.let {
+            if (isInPlaybackState()) {
+                mCurrentState = STATE_IDLE
+                it.stop()
+                it.reset()
+            }
+            it.setDataSource(mCurrentPath)
+            it.prepareAsync()
+        }
+    }
+
     override fun onCompletion(mp: MediaPlayer?) {
         mCurrentState = STATE_PLAYBACK_COMPLETED
         mTargetState = STATE_PLAYBACK_COMPLETED
-        updateVisibility()
+        mp?.apply {
+            seekTo(0)
+            pause()
+            mCurrentState = STATE_PAUSED
+            updateVisibility()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
+        // Fix the problem of blocking the bottom control after the navigation bar is redisplayed
+        frame_root.setPadding(0, 0, 0, getSoftButtonsBarHeight())
+        hideUi()
         initialize()
     }
 
@@ -134,6 +172,14 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_jump -> openJumpDialog()
+            R.id.action_to_srt -> {
+                val smiFile = File(mCurrentPath?.substringBeforeLast('.') + ".smi")
+                if (smiFile.isFile) {
+
+                }
+
+
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -150,10 +196,12 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         mCurrentState = STATE_PREPARED
         mVideoWidth = mp.videoWidth
         mVideoHeight = mp.videoHeight
+        toast("$mVideoWidth x $mVideoHeight", false)
         setupTimeBar()
+        openSubtitle()
         if (mVideoHeight != 0 && mVideoWidth != 0) {
             setSurfaceViewSize()
-            Log.e(TAG, "[onPrepared]  mSurfaceHeight $mSurfaceHeight mSurfaceWidth $mSurfaceWidth")
+            // Log.e(TAG, "[onPrepared]  mSurfaceHeight $mSurfaceHeight mSurfaceWidth $mSurfaceWidth")
             surface_view.holder.setFixedSize(mVideoWidth, mVideoHeight)
             if (mSurfaceHeight == mVideoHeight && mSurfaceWidth == mVideoWidth) {
                 if (mTargetState == STATE_PLAYING) {
@@ -172,7 +220,6 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
             start()
             seek(mCurrentPosition)
         }
-        mHandler.post(mProgressBarChecker)
         super.onResume()
     }
 
@@ -190,54 +237,56 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
     }
 
     override fun onSeekComplete(mp: MediaPlayer) {
-        Log.e(TAG, "[onSeekComplete] ${mp.currentPosition}")
-        time_bar.setPosition(mp.duration.toLong())
+
     }
 
     override fun onTimedText(mp: MediaPlayer?, text: TimedText?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mSubTitleHandler.post {
+            text_subtitle.text = text?.text
+        }
+
     }
 
+    // implements change the volume by gesture
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!mIsFullScreen) {
+            showUi()
+            return true
+        }
         val x_changed = if (mTouchX != -1f && mTouchY != -1f) event.rawX - mTouchX else 0f
         val y_changed = if (x_changed != 0f) event.rawY - mTouchY else 0f
-        // coef is the gradient's move to determine a neutral zone
-        val coef = Math.abs(y_changed / x_changed)
         val xgesturesize = ((x_changed / mScreen.xdpi) * 2.54f);
-        val delta_y = Math.max(1f, (Math.abs(mInitTouchY - event.getRawY()) / mScreen.xdpi + 0.5f) * 2f);
+        val delta_y = Math.max(1f, (Math.abs(mInitTouchY - event.rawY) / mScreen.xdpi + 0.5f) * 2f);
+        val coef = Math.abs(y_changed / x_changed);
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                mHandler.removeCallbacks(mUiChecker)
                 mTouchY = event.rawY
                 mInitTouchY = event.rawY
-                mVol = mAudioManager.getMusicVolume().toFloat()
-                mTouchAction = TOUCH_NONE
                 mTouchX = event.rawX
             }
             MotionEvent.ACTION_MOVE -> {
-                if (mTouchAction != TOUCH_IGNORE) {
-                    if (mFov == 0f) {
-                        if (mTouchAction != TOUCH_SEEK && coef > 2) {
-                            if (abs(y_changed / mSurfaceYDisplayRange) < 0.05) return false
-                            mTouchY = event.rawY
-                            mTouchX = event.rawX
-                            //Log.e(TAG, "[onTouch] Sliding distance in the vertical direction: $y_changed")
-                            touchVertical(y_changed)
-                        } else {
-                            touchSeek(round(delta_y).toInt(), xgesturesize, false)
-                        }
-                    }
+                if (mTouchAction == TOUCH_IGNORE) return false
+                if (mTouchAction != TOUCH_SEEK && coef > 2) {
+                    if (Math.abs(y_changed / mSurfaceYDisplayRange) < 0.05)
+                        return false;
+                    mTouchY = event.rawY;
+                    mTouchX = event.rawX;
+                } else {
+                    seekTouch(Math.round(delta_y), xgesturesize, false)
                 }
             }
             MotionEvent.ACTION_UP -> {
-                if (mTouchAction == TOUCH_IGNORE) mTouchAction = TOUCH_NONE
-                if (mTouchAction == TOUCH_SEEK) {
-                    touchSeek(abs(delta_y).toInt(), xgesturesize, true)
-                }
-                mTouchY = -1f
-                mTouchX = -1f
+                if (mTouchAction == TOUCH_IGNORE) mTouchAction = TOUCH_NONE;
+                if (mTouchAction == TOUCH_SEEK)
+                    seekTouch(Math.round(delta_y), xgesturesize, true)
+                scheduleHideUi()
+                text_debug.text = ""
+                mTouchX = -1f;
+                mTouchY = -1f;
             }
         }
-        return mTouchAction != TOUCH_NONE
+        return false
     }
 
     private fun openJumpDialog() {
@@ -263,14 +312,27 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
     }
 
     private fun openSubtitle() {
+        Log.e("TAG", "[openSubtitle]")
+
         val subtitle = mCurrentPath?.substringBeforeLast('.') + ".srt"
         if (subtitle.isFile()) {
             try {
-                mMediaPlayer?.addTimedTextSource(subtitle, MIMETYPE_TEXT_SUBRIP)
+                mMediaPlayer?.addTimedTextSource(subtitle, MediaFormat.MIMETYPE_TEXT_SUBRIP)
             } catch (ignored: Exception) {
+                Log.e("TAG", "[openSubtitle] ${ignored.message}")
+            }
+
+
+            mMediaPlayer?.let {
+                val index =
+                    it.trackInfo.findIndex { item -> item.trackType == MediaPlayer.TrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT }
+                        ?: 0
+                it.selectTrack(index)
+
             }
         }
     }
+
 
     private fun openVideo() {
         if (mCurrentPath == null) return
@@ -281,6 +343,8 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
                 setOnPreparedListener(that)
                 setOnCompletionListener(that)
                 setOnErrorListener(that)
+                setOnSeekCompleteListener(that)
+                setOnTimedTextListener(that)
                 setDataSource(mCurrentPath)
                 setDisplay(surface_view.holder)
                 setScreenOnWhilePlaying(true)
@@ -306,42 +370,11 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         }
     }
 
-    private fun jumpToNext(bNext: Boolean = false) {
-        if (bNext) {
-            val position = mPlayList.indexOf(mCurrentPath)
-            if (position + 1 >= mPlayList.size) return
-            mCurrentPath = mPlayList[position + 1]
-        } else {
-
-
-            val position = mPlayList.indexOf(mCurrentPath)
-            if (position - 1 < 0) return
-            mCurrentPath = mPlayList[position - 1]
-        }
-
-        mMediaPlayer?.let {
-            if (isInPlaybackState()) {
-                mCurrentState = STATE_IDLE
-                it.stop()
-                it.reset()
-            }
-
-            it.setDataSource(mCurrentPath)
-            it.prepareAsync()
-        }
-
-    }
-
-    private fun postProgressCheck() {
-        val pos = (mMediaPlayer?.currentPosition ?: 0).toLong()
-        time_bar.setPosition(pos)
-        //Log.e(TAG, getStringForTime(mStringBuilder, mFormatter, pos))
-        text_position.text = getStringForTime(mStringBuilder, mFormatter, pos)
-        mHandler.postDelayed(this.mProgressBarChecker, (1000 - (pos % 1000)).toLong())
-    }
-
     private fun release(clearTargetState: Boolean) {
         mMediaPlayer?.apply {
+            // Resets the MediaPlayer to its uninitialized state.
+            // After calling this method, you will have to initialize
+            // it again by setting the data source and calling prepare().
             reset()
             release()
             mMediaPlayer = null
@@ -352,20 +385,50 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         }
     }
 
+    // Hide status bar, ActionBar, navigation bar
+    private fun scheduleHideUi() {
+        mHandler.postDelayed(mUiChecker, DELAY_UI_CHECK)
+    }
+
+    private fun scheduleUpdateProgress() {
+        if (mIsFullScreen) {
+            val pos = (mMediaPlayer?.currentPosition ?: 0).toLong()
+            time_bar.setPosition(pos)
+            text_position.text = getStringForTime(mStringBuilder, mFormatter, pos)
+            mHandler.postDelayed(mProgressBarChecker, (1000 - (pos % 1000)))
+        }
+    }
+
     private fun seek(time: Int) {
         mMediaPlayer?.seekTo(time)
     }
 
-    private fun setAudioVolume(volume: Int) {
-        val vol = volume
-        if (vol <= mAudioMax) {
-            if (vol != mAudioManager.getMusicVolume()) {
-                try {
-                    mAudioManager.setMusicVolume(vol)
-                } catch (ignored: Exception) {
-                }
-            }
-        }
+    private fun seekTouch(cf: Int, gestureSize: Float, seek: Boolean) {
+        var coef = cf
+        if (coef == 0)
+            coef = 1
+        if (abs(gestureSize) < 1)
+            return
+        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_SEEK)
+            return
+        mTouchAction = TOUCH_SEEK
+        val length = mMediaPlayer?.duration ?: 0
+        val time = mMediaPlayer?.currentPosition ?: 0
+        var jump = (Math.signum(gestureSize) * (600000 * Math.pow(gestureSize / 8.0, 4.0) + 3000) / coef).toInt()
+        if ((jump > 0) && ((time + jump) > length))
+            jump = (length - time)
+        if ((jump < 0) && ((time + jump) < 0))
+            jump = -time;
+        if (seek && length > 0)
+            seek(time + jump)
+        if (length > 0)
+            text_debug.text = String.format(
+                "%s%s (%s)%s",
+                if (jump >= 0) "+" else "",
+                getStringForTime(mStringBuilder, mFormatter, jump.toLong()),
+                getStringForTime(mStringBuilder, mFormatter, (time + jump).toLong()),
+                if (coef > 1) String.format(" x%.1g", 1.0 / coef) else ""
+            )
     }
 
     private fun setSurfaceViewSize() {
@@ -373,36 +436,15 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         val height = (mVideoHeight.toFloat() / mVideoWidth.toFloat() * mScreen.widthPixels.toFloat()).toInt()
         val lp = FrameLayout.LayoutParams(width, height)
         lp.gravity = Gravity.TOP
-        Log.e(
-            TAG,
-            "[setSurfaceViewSize] $height  ${mScreen.widthPixels}x${mScreen.heightPixels} $mRealHeight ${(mRealHeight - height) / 2}"
-        )
-        lp.setMargins(0, (mRealHeight - height) / 2, 0, 0)
+        lp.setMargins(0, (mScreen.heightPixels - height) / 2, 0, 0)
         surface_view.layoutParams = lp
-//        val width = mScreen.widthPixels
-//        val height = (mVideoHeight.toFloat() / mVideoWidth.toFloat() * mScreen.widthPixels.toFloat()).toInt()
-//        val lp = ConstraintLayout.LayoutParams(width, height)
-//        surface_view.layoutParams = lp
-//        val constraintSet = ConstraintSet()
-//        constraintSet.clone(constraint_layout)
-//        constraintSet.clear(surface_view.id, ConstraintSet.TOP)
-//        constraintSet.connect(
-//            surface_view.id,
-//            ConstraintSet.TOP,
-//            ConstraintSet.PARENT_ID,
-//            ConstraintSet.TOP,
-//            (mScreen.heightPixels - height) / 2
-//        )
-//        constraintSet.applyTo(constraint_layout)
-//        constraint_layout.invalidate()
-    }
-
-    private fun setupAudioManager() {
-        mAudioManager = getAudioManager()
+        val subTitleLayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        text_subtitle.setPadding(0, (mScreen.heightPixels - height) / 2 + height, 0, 0)
     }
 
     private fun setupControls() {
-
         image_pause.setOnClickListener {
             if (mCurrentState == STATE_PLAYING) {
                 pause()
@@ -419,19 +461,13 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         }
     }
 
-    private fun setupDebugView(bShow: Boolean) {
-//        if (bShow) text_debug.visible()
-//        else text_debug.inVisible()
-    }
-
-    private fun setupMediaPlayer(holder: SurfaceHolder?) {
-        if (mMediaPlayer != null) return
-        mMediaPlayer = MediaPlayer().also {
-            it.setDisplay(holder)
-            it.setOnErrorListener(this)
-            it.setOnCompletionListener(this)
-            it.setOnSeekCompleteListener(this)
-        }
+    private fun setupPlaylist(dir: String) {
+        val directory = File(dir.substringBeforeLast('/'))
+        if (!directory.isDirectory) return
+        val files = directory.listFiles(FileFilter { it.isFile && it.name.isVideoFast() })
+        if (files == null) return
+        files.sortWith(compareBy(Collator.getInstance(Locale.CHINA)) { it.name.toLowerCase() })
+        files.forEach { mPlayList.add(it.absolutePath) }
     }
 
     private fun setupSurfaceView() {
@@ -447,12 +483,19 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         time_bar.setDuration(duration)
     }
 
-    private fun setupToolBar(title: String?) {
-        supportActionBar?.apply {
-            setDisplayShowHomeEnabled(true)
-            setDisplayHomeAsUpEnabled(true)
-            setTitle(title)
-        }
+
+    private fun setupVariables() {
+        mMaxVolume = mAudioManager.getMusicMaxVolume()
+        mSeekEndOffset = dp2px(50f).toInt()
+        mThreshold = 80
+    }
+
+    private fun showUi() {
+        linear_controller.visible()
+        showSystemUI(true)
+        mIsFullScreen = true
+        mHandler.post(mProgressBarChecker)
+        scheduleHideUi()
     }
 
     private fun start() {
@@ -495,70 +538,14 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         release(true)
     }
 
-    private fun touchSeek(c: Int, gestureSize: Float, seek: Boolean) {
-        mMediaPlayer?.let {
-            var coef = c
-            if (coef == 0) coef = 1
-            if (abs(gestureSize) < 1) return
-            if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_SEEK) return
-            mTouchAction = TOUCH_SEEK
-            val length = it.duration
-            val time = it.currentPosition
-            var jump = (Math.signum(gestureSize) * (600000 * Math.pow(gestureSize / 8.0, 4.0) + 3000) / coef).toInt()
-            if ((jump > 0) && ((time + jump) > length))
-                jump = (length - time);
-            if ((jump < 0) && ((time + jump) < 0))
-                jump = -time;
-            text_debug.text = String.format(
-                "%s%s (%s)%s",
-                if (jump >= 0) "+" else "",
-                jump.toLong().millisToString(),
-                (time + jump).toLong().millisToString(),
-                if (coef > 1) String.format(" x%.1g", 1.0 / coef) else ""
-            )
-//        Log.e(
-//            TAG, String.format(
-//                "%s%s (%s)%s",
-//                if (jump >= 0) "+" else "",
-//                jump.toLong().millisToString(),
-//                (time + jump).toLong().millisToString(),
-//                if (coef > 1) String.format(" x%.1g", 1.0 / coef) else ""
-//            )
-//        )
-            //Log.e(TAG, "[touchsSeek] jump -> $jump")
-            if (seek && length > 0) {
-                seek(time + jump);
-                text_debug.text = ""
-            }
-        }
-    }
-
-    private fun touchVertical(y: Float) {
-        val rightAction = mTouchX.toInt() > 4 * mScreen.widthPixels / 7f
-        if (rightAction) {
-            //Log.e(TAG, "[touchVertical] Touch the action on the right side of the screen to change the playback volume")
-            touchVolumeChange(y)
-            return
-        }
-        val leftAction = !rightAction && mTouchX.toInt() < (3 * mScreen.widthPixels / 7f)
-    }
-
-    private fun touchVolumeChange(y: Float) {
-        if (mTouchAction != TOUCH_NONE && mTouchAction != TOUCH_VOLUME) return
-        val delta = -(y / mScreen.heightPixels.toFloat() * mAudioMax)
-        //Log.e(TAG, "[touchVolumeChange] Volume delta value is $delta")
-        mVol += delta
-        val vol = Math.min(Math.max(mVol, 0f), mAudioMax * 1f)
-        if (delta != 0f) {
-            if (vol > mAudioMax) {
-            } else {
-                setAudioVolume(vol.toInt())
-            }
-        }
-    }
-
     private fun updateVisibility() {
         mMediaPlayer?.let {
+
+
+            mCurrentPath?.substringAfterLast('/').apply {
+                text_subtitle.text = this
+                supportActionBar?.setTitle(this)
+            }
             when (mCurrentState) {
                 STATE_PLAYING -> {
                     image_pause.setImageResource(android.R.drawable.ic_media_pause)
@@ -581,11 +568,9 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
         private const val STATE_PAUSED = 4
         private const val STATE_PLAYBACK_COMPLETED = 5
         private const val TOUCH_NONE = 0
-        private const val TOUCH_VOLUME = 1
-        private const val TOUCH_BRIGHTNESS = 2
-        private const val TOUCH_MOVE = 3
         private const val TOUCH_SEEK = 4
         private const val TOUCH_IGNORE = 5
+        private const val DELAY_UI_CHECK = 5000L
 
         private const val TAG = "Media/VideoPlayer"
     }

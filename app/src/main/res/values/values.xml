@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="forward_content_browse_enabled">false</bool>
+    <color name="album_art_scrim">#000000</color>
+    <color name="border_topbar_L2">#ffe6ecf3</color>
+    <color name="browse_playback_bg">@android:color/black</color>
+    <color name="car_card_ripple_background_light">#3dffffff</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#da4d26</color>
+    <color name="colorPrimaryDark">#a93409</color>
+    <color name="darker_transparent">#C1000000</color>
+    <color name="exo_error_message_background_color">#AA000000</color>
+    <color name="file_manager_tool_bar_color">@color/violet</color>
+    <color name="gray">#666666</color>
+    <color name="layout_background">#ff00a89d</color>
+    <color name="lex_prop_title">#ff333333</color>
+    <color name="line_dotted">#ffebebeb</color>
+    <color name="page_background">#fff5f6fa</color>
+    <color name="sentenceHistoryColor">#ff999999</color>
+    <color name="translateVoiceBg">#ffecf4fd</color>
+    <color name="translateVoiceTextColor">#ff0079de</color>
+    <color name="transparent_black">#94333232</color>
+    <color name="txt_disabled">#ffb1b8d0</color>
+    <color name="txt_L1">#ff161a2a</color>
+    <color name="txt_L2">#ff414a68</color>
+    <color name="violet">#912699</color>
+    <color name="white">#ffffff</color>
+    <declare-styleable name="AppBarView"><!-- Maximum number of tabs to show on the app bar -->
+        <attr name="max_tabs" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="CarTheme"><!-- ================== --><!-- Theming Attributes --><!-- ================== -->
+        <eat-comment/><!-- Attribute for specifying the styling of dialogs within a car theme. Note: this is
+             different from the style that is applied to framework/AppCompat dialogs. This will
+             only affect the styling of dialogs provided by the car support library. -->
+        <attr format="reference"
+              name="carDialogTheme"/><!-- An attribute for specifying a style that modifies the look of a PagedListView. -->
+        <attr format="reference"
+              name="pagedListViewStyle"/><!-- ================= --><!-- Dialog Attributes --><!-- ================= -->
+        <eat-comment/><!-- The background color of a dialog. -->
+        <attr format="color" name="dialogBackgroundColor"/><!-- The style of the title text in a CarAlertDialog. -->
+        <attr format="reference"
+              name="dialogTitleStyle"/><!-- The style of the body text in a CarAlertDialog or the list items in a CarListDialog. -->
+        <attr format="reference" name="dialogBodyStyle"/><!-- The style of the action buttons in a CarAlertDialog. -->
+        <attr format="reference"
+              name="dialogButtonStyle"/><!-- A theme for the styling of the list in a CarListDialog. -->
+        <attr format="reference"
+              name="dialogListTheme"/><!-- ================= --><!-- Drawer Attributes --><!-- ================= -->
+        <eat-comment/><!-- The background color of the drawer. -->
+        <attr format="color"
+              name="drawerBackgroundColor"/><!-- The color of the header text and arrow in the drawer when it is open. -->
+        <attr format="color"
+              name="drawerOpenHeaderColor"/><!-- The color of the header text and arrow in the drawer when it is closed. -->
+        <attr format="color"
+              name="drawerClosedHeaderColor"/><!-- The TextAppearance of each item's title text in the drawer list. -->
+        <attr format="reference"
+              name="drawerItemTitleTextAppearance"/><!-- The TextAppearance of each item's body text in the drawer list. -->
+        <attr format="reference" name="drawerItemBodyTextAppearance"/><!-- The styling of the list in the drawer. -->
+        <attr format="reference" name="drawerListStyle"/>
+    </declare-styleable>
+    <declare-styleable name="ClickThroughToolbar"><!-- Whether or not clicks on this toolbar will pass through to an underlying view. This
+             value is false by default. -->
+        <attr format="boolean" name="clickThrough"/>
+    </declare-styleable>
+    <declare-styleable name="ColumnCardView"><!-- The number of columns that this ColumnCardView should span across. This value will
+             determine the width of the card. -->
+        <attr format="integer" name="columnSpan"/>
+    </declare-styleable>
+    <declare-styleable name="DefaultTimeBar">
+        <attr name="bar_height" format="dimension"/>
+        <attr name="touch_target_height" format="dimension"/>
+        <attr name="ad_marker_width" format="dimension"/>
+        <attr name="scrubber_enabled_size" format="dimension"/>
+        <attr name="scrubber_disabled_size" format="dimension"/>
+        <attr name="scrubber_dragged_size" format="dimension"/>
+        <attr name="scrubber_drawable" format="reference"/>
+        <attr name="played_color" format="color"/>
+        <attr name="scrubber_color" format="color"/>
+        <attr name="buffered_color" format="color"/>
+        <attr name="unplayed_color" format="color"/>
+        <attr name="ad_marker_color" format="color"/>
+        <attr name="played_ad_marker_color" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="DrawerArrowDrawable"><!-- The color of the arrow. -->
+        <attr format="color" name="carArrowColor"/><!-- Whether the arrow will animate when switches directions. -->
+        <attr format="boolean" name="carArrowAnimate"/><!-- The size of the arrow's bounding box. -->
+        <attr format="dimension"
+              name="carArrowSize"/><!-- The length of the top and bottom bars that merge to form the point of the arrow. -->
+        <attr format="dimension" name="carArrowHeadLength"/><!-- The length of arrow shaft. -->
+        <attr format="dimension"
+              name="carArrowShaftLength"/><!-- The thickness of each of the bars that form the arrow. -->
+        <attr format="dimension"
+              name="carArrowThickness"/><!-- The spacing between the menu bars (i.e. the "hamburger" icon). -->
+        <attr format="dimension"
+              name="carMenuBarSpacing"/><!-- The size of the menu bars (i.e. the "hamburger" icon). -->
+        <attr format="dimension" name="carMenuBarThickness"/>
+    </declare-styleable>
+    <declare-styleable name="FixedRatioImageView">
+        <attr name="aspect_ratio" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="ListItem"><!-- The background color of each ListItem. -->
+        <attr format="color"
+              name="listItemBackgroundColor"/><!-- The TextAppearance of the title text in the ListItem. -->
+        <attr format="reference"
+              name="listItemTitleTextAppearance"/><!-- The TextAppearance of the body text in the ListItem. -->
+        <attr format="reference"
+              name="listItemBodyTextAppearance"/><!-- The TextAppearance of the text in the Subheader ListItem. -->
+        <attr format="reference" name="listItemSubheaderTextAppearance"/>
+    </declare-styleable>
+    <declare-styleable name="PagedListView"><!-- Whether or not to offset the list view by the width of scroll bar. Setting this to
+             true will ensure that any views within the list will not overlap the scroll bar.
+             Deprecated: use gutter instead. If gutter is specified, this value is ignored.-->
+        <attr format="boolean" name="offsetScrollBar"/><!-- Whether to include a gutter to the start, end or both sides of the list view items.
+             The gutter width will be the width of the scrollbar, and by default will be set to
+             both. -->
+        <attr format="enum" name="gutter"><!-- No gutter on either side, the list view items will extend the full width of the
+                 PagedListView. -->
+            <enum name="none"
+                  value="0"/><!-- Include a gutter on the start side only (i.e. the side with the scrollbar). -->
+            <enum name="start" value="1"/><!-- Include a gutter on the end side only (i.e. the opposite side to the
+                 scrollbar). -->
+            <enum name="end" value="2"/><!-- Include a gutter on both sides of the list view items. -->
+            <enum name="both" value="3"/>
+        </attr><!-- The size of the gutter that is either at the start, end or both sides of the
+             items in the PagedListView. There is a default value that changes per screen size if
+             a gutter size is not explicitly set.-->
+        <attr format="dimension" name="gutterSize"/><!-- Whether to display the scrollbar or not. Defaults to true. -->
+        <attr format="boolean" name="scrollBarEnabled"/><!-- Sets the color of the scroll bar. This color only affects the thumb of the scroll bar;
+             the up/down buttons are unaffected. To set these, use upButtonIcon and downButtonIcon
+             respectively. -->
+        <attr format="color" name="scrollBarColor"/><!-- The top margin before the scroll bar is drawn. -->
+        <attr format="dimension" name="scrollBarTopMargin"/><!-- The width of the container that will hold the scrollbar. The scrollbar is centered
+             within this value. If this value is not explicitly set, the scrollbar centers itself
+             within the car_margin value. -->
+        <attr format="dimension" name="scrollBarContainerWidth"/><!-- Whether or not to show a vertical diving line between each item of the list. Divider
+             after the last item (LinearLayoutManager) or row (GridLayoutManager) will not be shown
+             but there will be an offset for divider space. -->
+        <attr format="boolean" name="showPagedListViewDivider"/><!-- An optional id that specifies a child View whose starting edge will be used to
+             determine the start position of the dividing line. -->
+        <attr format="reference" name="alignDividerStartTo"/><!-- An optional id that specifies a child View whose ending edge will be used to
+             determine the end position of the dividing line. -->
+        <attr format="reference" name="alignDividerEndTo"/><!-- A starting margin before the drawing of the dividing line. This margin will be an
+             offset from the view specified by "alignDividerStartTo" if given. -->
+        <attr format="dimension" name="dividerStartMargin"/><!-- An ending margin before the drawing of the dividing line. This margin will be an
+             offset from the view specified by "alignDividerEndTo" if given. -->
+        <attr format="dimension" name="dividerEndMargin"/><!-- The color of the list divider. -->
+        <attr format="color" name="listDividerColor"/><!-- The width of the margin on the right side of the list.
+             Deprecated: use gutter instead. If gutter is specified, this value is ignored.-->
+        <attr format="dimension" name="listEndMargin"/><!-- An optional vertical spacing between items in the list. In GridLayoutManager items in
+             the last row would still have spacing at bottom. -->
+        <attr format="dimension" name="itemSpacing"/><!-- The icon to be used for the up button of the scroll bar. -->
+        <attr format="reference"
+              name="upButtonIcon"/><!-- The icon to be used for the down button of the scroll bar.  -->
+        <attr format="reference" name="downButtonIcon"/><!-- The amount of space before the first item in the list view. This space is
+             scrollable with the contents of the list. -->
+        <attr format="reference" name="listContentTopOffset"/><!-- Vertically center the list contents when the number of items in the list does not take
+             up the full height of the PagedListView. This value is "false" by default. -->
+        <attr format="boolean" name="verticallyCenterListContent"/><!-- Specifies how the PagedListView should respond to day/night mode events. The values
+             here should match the DayNightStyle @interface. See that class for more
+             information. -->
+        <attr format="enum" name="dayNightStyle"><!-- Automatically changes colors for day/night, assuming the content is light during
+                 the day and dark during the night. This is the default behavior. -->
+            <enum name="auto" value="0"/><!-- Automatically changes colors for day/night, with the colors being inverted from
+                 "auto". -->
+            <enum name="auto_inverse" value="1"/><!-- Fixes the colors to be light colored.  -->
+            <enum name="force_night" value="2"/><!-- Fixes the colors to be dark colored.  -->
+            <enum name="force_day" value="3"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="PlaybackControls">
+        <attr name="columns" format="integer"/>
+        <attr name="show_expand_button" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="PlayPauseStopState">
+        <attr name="state_pause" format="boolean"/>
+        <attr name="state_stop" format="boolean"/>
+        <attr name="state_play" format="boolean"/>
+        <attr name="state_disabled" format="boolean"/>
+    </declare-styleable>
+    <dimen name="car_app_bar_height">80dp</dimen>
+    <dimen name="car_padding_4">20dp</dimen>
+    <dimen name="dp4">4.0dip</dimen>
+    <dimen name="exo_media_button_height">52dp</dimen>
+    <dimen name="exo_media_button_width">71dp</dimen>
+    <dimen name="exo_play_button_height">36.0dip</dimen>
+    <dimen name="exo_play_button_width">36.0dip</dimen>
+    <dimen name="iv_height_L1">24.0dip</dimen>
+    <dimen name="iv_width_L1">24.0dip</dimen>
+    <dimen name="page_margin_default">16.0dip</dimen>
+    <dimen name="page_margin_L1">12.0dip</dimen>
+    <dimen name="page_margin_L2">8.0dip</dimen>
+    <dimen name="page_margin_L4">4.0dip</dimen>
+    <dimen name="statusbar_view_height">0.0dip</dimen>
+    <dimen name="txt_L1_chinese">16.0dip</dimen>
+    <dimen name="txt_L1_english">18.0dip</dimen>
+    <dimen name="txt_L2_chinese">14.0dip</dimen>
+    <integer name="app_selector_fade_duration">500
+    </integer>
+    <integer name="new_album_art_fade_in_duration">250</integer>
+    <item name="album_art_scrim_alpha" format="float" type="dimen">0.6</item>
+    <item type="id" name="imageDownloadTask"/>
+    <item name="playback_background_blur_radius" format="float" type="dimen">25
+    </item>
+    <item name="playback_background_blur_scale" format="float" type="dimen">1
+    </item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar"><!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="ExoMediaButton">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_width">@dimen/exo_media_button_width</item>
+        <item name="android:layout_height">@dimen/exo_media_button_height</item>
+    </style>
+    <style name="ExoMediaButton.FastForward">
+        <item name="android:src">@drawable/exo_controls_fastforward</item>
+        <item name="android:contentDescription">@string/exo_controls_fastforward_description</item>
+    </style>
+    <style name="ExoMediaButton.Next">
+        <item name="android:src">@drawable/exo_controls_next</item>
+        <item name="android:contentDescription">@string/exo_controls_next_description</item>
+    </style>
+    <style name="ExoMediaButton.Pause">
+        <item name="android:src">@drawable/exo_controls_pause</item>
+        <item name="android:contentDescription">@string/exo_controls_pause_description</item>
+    </style>
+    <style name="ExoMediaButton.Play">
+        <item name="android:src">@drawable/exo_controls_play</item>
+        <item name="android:contentDescription">@string/exo_controls_play_description</item>
+    </style>
+    <style name="ExoMediaButton.Previous">
+        <item name="android:src">@drawable/exo_controls_previous</item>
+        <item name="android:contentDescription">@string/exo_controls_previous_description</item>
+    </style>
+    <style name="ExoMediaButton.Rewind">
+        <item name="android:src">@drawable/exo_controls_rewind</item>
+        <item name="android:contentDescription">@string/exo_controls_rewind_description</item>
+    </style>
+    <style name="ExoMediaButton.Shuffle">
+        <item name="android:src">@drawable/exo_controls_shuffle</item>
+        <item name="android:contentDescription">@string/exo_controls_shuffle_description</item>
+    </style>
+</resources>

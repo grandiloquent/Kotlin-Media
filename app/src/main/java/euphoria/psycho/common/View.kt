@@ -18,12 +18,33 @@ fun View.visible() {
     }
 }
 
-fun View.setSystemUiVisibilityCompat() {
+fun View.toggleSystemVisibility(bShow: Boolean) {
     try {
+
+        /*
+        SYSTEM_UI_FLAG_FULLSCREEN
+SYSTEM_UI_FLAG_HIDE_NAVIGATION
+SYSTEM_UI_FLAG_IMMERSIVE
+SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+SYSTEM_UI_FLAG_LAYOUT_STABLE
+SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+SYSTEM_UI_FLAG_LOW_PROFILE
+SYSTEM_UI_FLAG_VISIBLE
+         */
         View::class.java.getDeclaredField("SYSTEM_UI_FLAG_LAYOUT_STABLE")
-        systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
+        if (bShow)
+            systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        else systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+
     } catch (ignored: Exception) {
         Log.e(TAG, "[setSystemUiVisibilityCompat] ${ignored.message}")
     }

@@ -19,6 +19,7 @@ import euphoria.psycho.videos.MovieActivity
 import euphoria.psycho.videos.MoviePlayer
 import euphoria.psycho.videos.R
 import kotlinx.android.synthetic.main.abc_alert_dialog_material.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_explorer.*
 import java.io.File
 import java.text.Collator
@@ -28,7 +29,6 @@ import java.util.*
 class ExplorerFragment : Fragment() {
     private lateinit var mExplorerAdapter: ExplorerAdapter
     private lateinit var mDirectory: String
-    private lateinit var mRecyclerView: RecyclerView
     private lateinit var mRequestManager: RequestManager
     private var mSortBy = SORTBY_DEFAULT
     private var mAscending = true
@@ -38,11 +38,6 @@ class ExplorerFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-
-    }
-
     private fun fetchItems(
         dir: File,
         sortby: Int = SORTBY_DEFAULT,
@@ -50,11 +45,8 @@ class ExplorerFragment : Fragment() {
     ): MutableList<ExplorerItem> {
         val files = dir.listFiles()
         val list = mutableListOf<ExplorerItem>()
-
         if (files == null) return list
-
         val collator = Collator.getInstance(Locale.CHINA)
-
         if (ascending) {
             when (sortby) {
                 SORTBY_NAME -> {
@@ -70,7 +62,6 @@ class ExplorerFragment : Fragment() {
                     files.sortWith(compareBy<File> { it.isFile }.thenBy { it.name.substringAfterLast('.') })
                 }
                 SORTBY_DEFAULT -> {
-
                 }
                 else -> {
                 }
@@ -94,7 +85,6 @@ class ExplorerFragment : Fragment() {
                     })
                 }
                 SORTBY_DEFAULT -> {
-
                 }
                 else -> {
                 }
@@ -109,11 +99,8 @@ class ExplorerFragment : Fragment() {
                 )
             )
         }
+        uiToolbar.title = dir.name
         return list
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_explorer, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -123,7 +110,7 @@ class ExplorerFragment : Fragment() {
         mDirectory = preferences.getString(KEY_DIRECTORY, Environment.getExternalStorageDirectory().absolutePath)
         mSortBy = preferences.getInt(KEY_SORTBY, SORTBY_DEFAULT)
         mAscending = preferences.getBoolean(KEY_ASCENDING, true)
-        val items = fetchItems(File(mDirectory))
+        val items = fetchItems(File(mDirectory), mSortBy, mAscending)
         mRequestManager = Glide.with(this)
         mExplorerAdapter = ExplorerAdapter(requireContext(), mRequestManager, items)
         mExplorerAdapter.onClicked = { item ->
@@ -145,46 +132,21 @@ class ExplorerFragment : Fragment() {
         }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = mExplorerAdapter
-
         swipeRefreshLayout.listener = object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
-                mExplorerAdapter.updateDataset(fetchItems(File(mDirectory)))
+                mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
                 swipeRefreshLayout.setRefreshing(false)
             }
-
         }
-
     }
 
-    override fun onResume() {
-        super.onResume()
-
-
-        view?.let {
-            it.isFocusableInTouchMode = true
-            it.requestFocus()
-            it.setOnKeyListener(object : View.OnKeyListener {
-                override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
-
-                    return if (event.getAction() === KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                        val dir = File(mDirectory)
-                        return dir.parentFile?.let {
-                            mExplorerAdapter.updateDataset(fetchItems(it))
-                            true
-                        } ?: false
-
-                    } else false
-                }
-            })
-        }
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_explorer, container, false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
             R.id.action_storage -> {
-
                 mDirectory = Environment.getExternalStorageDirectory().absolutePath
             }
             R.id.action_ascending -> mAscending = true
@@ -193,7 +155,6 @@ class ExplorerFragment : Fragment() {
             R.id.action_sortby_size -> mSortBy = SORTBY_SIZE
             R.id.action_sortby_date -> mSortBy = SORTBY_DATE
             R.id.action_sortby_type -> mSortBy = SORTBY_TYPE
-
             else -> return true
         }
         mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
@@ -205,6 +166,24 @@ class ExplorerFragment : Fragment() {
         requireContext().getDefaultSharedPreferences().edit().putString(KEY_DIRECTORY, mDirectory)
             .putInt(KEY_SORTBY, mSortBy)
             .putBoolean(KEY_ASCENDING, mAscending).apply()
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        view?.let {
+            it.isFocusableInTouchMode = true
+            it.requestFocus()
+            it.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    val dir = File(mDirectory)
+                    return@OnKeyListener dir.parentFile?.let {
+                        mExplorerAdapter.updateDataset(fetchItems(it, mSortBy, mAscending))
+                        true
+                    } ?: false
+                } else false
+            })
+        }
     }
 
     companion object {

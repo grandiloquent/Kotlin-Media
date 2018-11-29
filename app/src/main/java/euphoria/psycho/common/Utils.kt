@@ -16,7 +16,7 @@ val SDK_INT by lazy {
     Build.VERSION.SDK_INT
 }
 
- fun Activity.getSoftButtonsBarHeight(): Int {
+fun Activity.getSoftButtonsBarHeight(): Int {
     // getRealMetrics is only available with API 17 and +
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         val metrics = DisplayMetrics()
@@ -50,6 +50,11 @@ fun Context.getStatusBarHeight(): Int {
 
 fun constrainValue(value: Int, min: Int, max: Int): Int {
     return Math.max(min, Math.min(value, max))
+}
+
+fun <T> Array<T>.findIndex(predicate: (T) -> Boolean): Int? {
+
+    return indices.find { it -> predicate(this[it]) }
 }
 
 fun constrainValue(value: Long, min: Long, max: Long): Long {

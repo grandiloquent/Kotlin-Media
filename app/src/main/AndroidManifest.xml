@@ -21,9 +21,13 @@
         </activity>
         <activity android:name="euphoria.psycho.player.VideoPlayer"
                   android:theme="@style/Theme.Design.Light"
-                  android:configChanges="orientation|keyboardHidden|screenSize">
-
+                  android:configChanges="orientation|keyboardHidden|screenSize" android:fitsSystemWindows="true">
+            <!--<intent-filter>-->
+                <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+                <!--<action android:name="android.intent.action.MAIN"/>-->
+            <!--</intent-filter>-->
             <intent-filter>
+
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>

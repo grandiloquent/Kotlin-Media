@@ -17,7 +17,7 @@ fun String.isPlainTextFast() = plainTextExtensions.any { endsWith(it, true) }
 
 fun String.isFile(): Boolean {
     return File(this).run {
-        exists() && isFile
+        isFile
     }
 }
 

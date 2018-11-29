@@ -15,6 +15,8 @@ import com.google.android.material.navigation.NavigationView
 import euphoria.psycho.common.checkPermissions
 import euphoria.psycho.videos.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.security.Permission
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initialize(saveState: Bundle?) {
         setContentView(R.layout.activity_main)
         setupToolBar()
+         
     }
 
 

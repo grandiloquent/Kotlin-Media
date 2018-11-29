@@ -32,5 +32,6 @@ val plainTextExtensions: Array<String> get() = arrayOf(".txt", ".html", ".log", 
 object C {
     const val INDEX_UNSET = -1
     const val TIME_UNSET = Long.MIN_VALUE + 1
+    const val CHARSET_UTF8 = "UTF-8"
 
 }
