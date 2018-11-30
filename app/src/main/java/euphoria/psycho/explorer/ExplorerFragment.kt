@@ -24,8 +24,9 @@ import euphoria.psycho.player.VideoPlayer
 import euphoria.psycho.videos.R
 import euphoria.psycho.videos.databinding.FragmentBookmarkBinding
 import kotlinx.android.synthetic.main.fragment_explorer.*
-import kotlinx.android.synthetic.main.fragment_translate.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.Collator
 import java.util.*
@@ -37,11 +38,6 @@ class ExplorerFragment : Fragment() {
     private lateinit var mRequestManager: RequestManager
     private var mSortBy = SORTBY_DEFAULT
     private var mAscending = true
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
 
     private fun fetchItems(
         dir: File,
@@ -123,7 +119,6 @@ class ExplorerFragment : Fragment() {
                 val dir = File(item.fullName)
                 if (dir.isDirectory) {
                     GlobalScope.launch {
-
                         var count = 0
                         var size = 0L
                         dir.walkTopDown().forEach {
@@ -138,7 +133,6 @@ class ExplorerFragment : Fragment() {
                         }
                     }
                 }
-
             }
 
             override fun onCopyFullPath(item: ExplorerItem) {
@@ -146,7 +140,6 @@ class ExplorerFragment : Fragment() {
             }
 
             override fun onMoveFile(item: ExplorerItem) {
-
                 val editText = EditText(requireContext()).apply {
                     setText(item.fullName.substringAfterLast('/'))
                     val position = item.fullName.getFilenameFromPath().indexOfLast { it == '.' }
@@ -167,12 +160,10 @@ class ExplorerFragment : Fragment() {
                         dialog.dismiss()
                     }.show()
                 dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-
-
             }
 
             override fun onAddBookmark(item: ExplorerItem) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                BookmarkDatabase.newInstance(requireContext()).addBookmark(item.fullName)
             }
 
             override fun onDelete(item: ExplorerItem) {
@@ -186,15 +177,15 @@ class ExplorerFragment : Fragment() {
                         )
                     )
                     .setPositiveButton(android.R.string.ok) { dialog, which ->
-                        File(item.fullName).delete()
-                        refreshList()
-                        dialog.dismiss()
+                        deleteFile(item.fullName) {
+                            refreshList()
+                            dialog.dismiss()
+                        }
                     }.setNegativeButton(android.R.string.cancel) { dialog, which ->
                         dialog.dismiss()
                     }
                     .show()
             }
-
         }
         mExplorerAdapter.onClicked = { item ->
             if (item.isFile) {
@@ -217,7 +208,6 @@ class ExplorerFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL))
             adapter = mExplorerAdapter
         }
-
         swipe_layout.listener = object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
@@ -226,13 +216,30 @@ class ExplorerFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private fun deleteFile(fullPath: String, callback: () -> Unit) {
 
-        return inflater.inflate(R.layout.fragment_explorer, container, false)
+        val dir = File(fullPath)
+        if (dir.isFile) {
+            dir.delete()
+            callback.invoke()
+        } else if (dir.isDirectory) {
+            GlobalScope.launch {
+                dir.walkBottomUp().forEach { it.delete() }
+                GlobalScope.launch(Dispatchers.Main) {
+                    requireContext().toast("$fullPath", false)
+                    callback.invoke()
+                }
+            }
+        }
     }
 
-    private fun refreshList() {
-        mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_explorer, container, false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -253,10 +260,34 @@ class ExplorerFragment : Fragment() {
         return true
     }
 
+    override fun onPause() {
+        super.onPause()
+        requireContext().getDefaultSharedPreferences().edit().putString(KEY_DIRECTORY, mDirectory)
+            .putInt(KEY_SORTBY, mSortBy)
+            .putBoolean(KEY_ASCENDING, mAscending).apply()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let {
+            it.isFocusableInTouchMode = true
+            it.requestFocus()
+            it.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    val dir = File(mDirectory)
+                    return@OnKeyListener dir.parentFile?.let {
+                        mDirectory = it.absolutePath
+                        mExplorerAdapter.updateDataset(fetchItems(it, mSortBy, mAscending))
+                        true
+                    } ?: false
+                } else false
+            })
+        }
+    }
+
     private fun openBookMark() {
         val context = requireContext()
         val bookmarkAdapter = BookmarkAdapter(BookmarkDatabase.newInstance(requireContext()).fetchBookmarks())
-
         val binding =
             DataBindingUtil.inflate<FragmentBookmarkBinding>(
                 LayoutInflater.from(context),
@@ -275,11 +306,9 @@ class ExplorerFragment : Fragment() {
             (point.x * 0.88).toInt(),
             WindowManager.LayoutParams.WRAP_CONTENT
         ).apply {
-
             isOutsideTouchable = true
             setBackgroundDrawable(ColorDrawable(Color.WHITE))
             showAtLocation(swipe_layout, Gravity.CENTER, 0, 0)
-
         }
         bookmarkAdapter.bookmarkClickCallback = object : BookmarkClickCallback {
             override fun onClick(bookmark: Bookmark) {
@@ -287,35 +316,11 @@ class ExplorerFragment : Fragment() {
                 refreshList()
                 popupWindow.dismiss()
             }
-
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        requireContext().getDefaultSharedPreferences().edit().putString(KEY_DIRECTORY, mDirectory)
-            .putInt(KEY_SORTBY, mSortBy)
-            .putBoolean(KEY_ASCENDING, mAscending).apply()
-
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        view?.let {
-            it.isFocusableInTouchMode = true
-            it.requestFocus()
-            it.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    val dir = File(mDirectory)
-                    return@OnKeyListener dir.parentFile?.let {
-                        mDirectory = it.absolutePath
-                        mExplorerAdapter.updateDataset(fetchItems(it, mSortBy, mAscending))
-                        true
-                    } ?: false
-                } else false
-            })
-        }
+    private fun refreshList() {
+        mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
     }
 
     companion object {

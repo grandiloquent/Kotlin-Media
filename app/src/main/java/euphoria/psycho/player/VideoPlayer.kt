@@ -543,7 +543,7 @@ class VideoPlayer : AppCompatActivity(), SurfaceHolder.Callback, MediaPlayer.OnE
 
 
             mCurrentPath?.substringAfterLast('/').apply {
-                text_subtitle.text = this
+
                 supportActionBar?.setTitle(this)
             }
             when (mCurrentState) {
