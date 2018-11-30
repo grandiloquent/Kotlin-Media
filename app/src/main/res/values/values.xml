@@ -1,29 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="forward_content_browse_enabled">false</bool>
     <color name="album_art_scrim">#000000</color>
-    <color name="border_topbar_L2">#ffe6ecf3</color>
-    <color name="browse_playback_bg">@android:color/black</color>
-    <color name="car_card_ripple_background_light">#3dffffff</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorPrimary">#da4d26</color>
     <color name="colorPrimaryDark">#a93409</color>
     <color name="darker_transparent">#C1000000</color>
-    <color name="exo_error_message_background_color">#AA000000</color>
-    <color name="file_manager_tool_bar_color">@color/violet</color>
-    <color name="gray">#666666</color>
-    <color name="layout_background">#ff00a89d</color>
     <color name="lex_prop_title">#ff333333</color>
     <color name="line_dotted">#ffebebeb</color>
-    <color name="page_background">#fff5f6fa</color>
     <color name="sentenceHistoryColor">#ff999999</color>
     <color name="translateVoiceBg">#ffecf4fd</color>
     <color name="translateVoiceTextColor">#ff0079de</color>
-    <color name="transparent_black">#94333232</color>
     <color name="txt_disabled">#ffb1b8d0</color>
     <color name="txt_L1">#ff161a2a</color>
     <color name="txt_L2">#ff414a68</color>
-    <color name="violet">#912699</color>
     <color name="white">#ffffff</color>
     <declare-styleable name="AppBarView"><!-- Maximum number of tabs to show on the app bar -->
         <attr name="max_tabs" format="integer"/>
@@ -176,32 +165,16 @@
         <attr name="state_play" format="boolean"/>
         <attr name="state_disabled" format="boolean"/>
     </declare-styleable>
-    <dimen name="car_app_bar_height">80dp</dimen>
-    <dimen name="car_padding_4">20dp</dimen>
-    <dimen name="dp4">4.0dip</dimen>
-    <dimen name="exo_media_button_height">52dp</dimen>
-    <dimen name="exo_media_button_width">71dp</dimen>
-    <dimen name="exo_play_button_height">36.0dip</dimen>
-    <dimen name="exo_play_button_width">36.0dip</dimen>
     <dimen name="iv_height_L1">24.0dip</dimen>
     <dimen name="iv_width_L1">24.0dip</dimen>
     <dimen name="page_margin_default">16.0dip</dimen>
     <dimen name="page_margin_L1">12.0dip</dimen>
     <dimen name="page_margin_L2">8.0dip</dimen>
     <dimen name="page_margin_L4">4.0dip</dimen>
-    <dimen name="statusbar_view_height">0.0dip</dimen>
     <dimen name="txt_L1_chinese">16.0dip</dimen>
     <dimen name="txt_L1_english">18.0dip</dimen>
     <dimen name="txt_L2_chinese">14.0dip</dimen>
-    <integer name="app_selector_fade_duration">500
-    </integer>
-    <integer name="new_album_art_fade_in_duration">250</integer>
-    <item name="album_art_scrim_alpha" format="float" type="dimen">0.6</item>
     <item type="id" name="imageDownloadTask"/>
-    <item name="playback_background_blur_radius" format="float" type="dimen">25
-    </item>
-    <item name="playback_background_blur_scale" format="float" type="dimen">1
-    </item>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar"><!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -211,37 +184,4 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="ExoMediaButton">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
-        <item name="android:layout_width">@dimen/exo_media_button_width</item>
-        <item name="android:layout_height">@dimen/exo_media_button_height</item>
-    </style>
-    <style name="ExoMediaButton.FastForward">
-        <item name="android:src">@drawable/exo_controls_fastforward</item>
-        <item name="android:contentDescription">@string/exo_controls_fastforward_description</item>
-    </style>
-    <style name="ExoMediaButton.Next">
-        <item name="android:src">@drawable/exo_controls_next</item>
-        <item name="android:contentDescription">@string/exo_controls_next_description</item>
-    </style>
-    <style name="ExoMediaButton.Pause">
-        <item name="android:src">@drawable/exo_controls_pause</item>
-        <item name="android:contentDescription">@string/exo_controls_pause_description</item>
-    </style>
-    <style name="ExoMediaButton.Play">
-        <item name="android:src">@drawable/exo_controls_play</item>
-        <item name="android:contentDescription">@string/exo_controls_play_description</item>
-    </style>
-    <style name="ExoMediaButton.Previous">
-        <item name="android:src">@drawable/exo_controls_previous</item>
-        <item name="android:contentDescription">@string/exo_controls_previous_description</item>
-    </style>
-    <style name="ExoMediaButton.Rewind">
-        <item name="android:src">@drawable/exo_controls_rewind</item>
-        <item name="android:contentDescription">@string/exo_controls_rewind_description</item>
-    </style>
-    <style name="ExoMediaButton.Shuffle">
-        <item name="android:src">@drawable/exo_controls_shuffle</item>
-        <item name="android:contentDescription">@string/exo_controls_shuffle_description</item>
-    </style>
 </resources>

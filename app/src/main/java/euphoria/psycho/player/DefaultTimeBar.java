@@ -29,9 +29,7 @@ import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static euphoria.psycho.common.UtilsKt.checkArgument;
-import static euphoria.psycho.common.UtilsKt.constrainValue;
-import static euphoria.psycho.common.UtilsKt.getStringForTime;
+import static euphoria.psycho.common.UtilsKt.*;
 
 /**
  * A time bar that shows a current position, buffered position, duration and ad markers.

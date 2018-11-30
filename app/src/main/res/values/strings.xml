@@ -8,17 +8,6 @@
     <string name="details_hms" translatable="false">%1$d:%2$02d:%3$02d</string>
     <string name="details_ms" translatable="false">%1$02d:%2$02d</string>
     <string name="dialog_jump_description">当前播放视频的总时长:</string>
-    <string name="exo_controls_fastforward_description">Fast forward</string>
-    <string name="exo_controls_next_description">Next track</string>
-    <string name="exo_controls_pause_description">Pause</string>
-    <string name="exo_controls_play_description">Play</string>
-    <string name="exo_controls_previous_description">Previous track</string>
-    <string name="exo_controls_repeat_all_description">Repeat all</string>
-    <string name="exo_controls_repeat_off_description">Repeat none</string>
-    <string name="exo_controls_repeat_one_description">Repeat one</string>
-    <string name="exo_controls_rewind_description">Rewind</string>
-    <string name="exo_controls_shuffle_description">Shuffle</string>
-    <string name="exo_controls_stop_description">Stop</string>
     <string name="explorer">Explorer</string>
     <string name="fragment_translator">Translator</string>
     <string name="header_subtitle_gallery">Videos and Photos in the directory</string>
@@ -29,7 +18,6 @@
     <string name="menu_language_zh">Chinese</string>
     <string name="resume_playing_message">Resume playing from %s ?</string>
     <string name="resume_playing_restart">Start over</string>
-    <string name="resume_playing_resume">Resume playing</string>
     <string name="resume_playing_title">Resume video</string>
     <string name="share">Share</string>
     <string name="translatePhoto">photo translate</string>

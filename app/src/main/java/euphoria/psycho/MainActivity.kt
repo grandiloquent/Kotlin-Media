@@ -2,11 +2,9 @@ package euphoria.psycho
 
 import android.Manifest
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -15,9 +13,6 @@ import com.google.android.material.navigation.NavigationView
 import euphoria.psycho.common.checkPermissions
 import euphoria.psycho.videos.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.security.Permission
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 

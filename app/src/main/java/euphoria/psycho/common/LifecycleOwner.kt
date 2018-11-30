@@ -8,6 +8,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 
+/*
+* https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-scope/index.html
+* https://developer.android.com/jetpack/androidx/migrate
+*
+ */
 private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 
 @ExperimentalCoroutinesApi

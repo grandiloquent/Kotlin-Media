@@ -2,7 +2,6 @@ package euphoria.psycho.common
 
 import android.graphics.Color
 import android.view.KeyEvent
-import androidx.fragment.app.Fragment
 
 
 private fun convert8BitToLuminanceComponent(component: Double): Double {

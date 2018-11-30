@@ -1,7 +1,6 @@
 package euphoria.psycho.videos
 
 import android.app.ActionBar
-import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
@@ -13,12 +12,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.widget.RelativeLayout
-import android.widget.ShareActionProvider
 import androidx.appcompat.app.AppCompatActivity
 import euphoria.psycho.common.ApiHelper
 import euphoria.psycho.common.getAudioManager
-import euphoria.psycho.common.hide
-import euphoria.psycho.common.show
 
 
 class MovieActivity : AppCompatActivity() {

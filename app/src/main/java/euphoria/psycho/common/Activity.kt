@@ -4,12 +4,19 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+
+fun Activity.getRealSize(): Point {
+
+    return Point().apply { windowManager.defaultDisplay.getSize(this) }
+
+}
 
 fun Activity.calculateScreenOrientation(): Int {
     val displayRotation = getDisplayRotation()
@@ -78,7 +85,6 @@ fun AppCompatActivity.removeFragmentByTag(tag: String) {
         supportFragmentManager.beginTransaction().remove(it).commit()
     }
 }
-
 
 
 fun AppCompatActivity.showSystemUI(toggleActionBarVisibility: Boolean) {

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <item android:id="@+id/action_storage" android:icon="@drawable/ic_bookmark_white_24px"
+          android:title="Storage" app:showAsAction="always|collapseActionView"/>
     <item android:id="@+id/action_sortby"
           android:title="排序"
           android:icon="@drawable/ic_menu_sort"
           app:showAsAction="always|collapseActionView">
         <menu>
-            <item android:id="@+id/action_storage" android:title="Storage"/>
+
             <item android:title="排序">
                 <menu>
                     <item android:id="@+id/action_sortby_name" android:title="名称"/>

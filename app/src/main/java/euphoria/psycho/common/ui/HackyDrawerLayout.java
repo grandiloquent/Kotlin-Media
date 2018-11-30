@@ -2,9 +2,9 @@
 package euphoria.psycho.common.ui;
 
 import android.content.Context;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 /*
  * Workaround for support lib bug, see https://code.google.com/p/android/issues/detail?id=60464

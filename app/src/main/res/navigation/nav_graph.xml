@@ -12,6 +12,7 @@
             tools:layout="@layout/fragment_translate">
     </fragment>
     <fragment
+
             android:id="@+id/fragment_translator"
             android:name="euphoria.psycho.translator.TranslatorFragment"
             android:label="@string/fragment_translator"

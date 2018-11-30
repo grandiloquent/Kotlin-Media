@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="item" type="euphoria.psycho.explorer.Bookmark"/>
+        <variable name="callback"
+                  type="euphoria.psycho.explorer.BookmarkClickCallback"/>
+    </data>
+    <TextView
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:id="@+id/text_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{item.name}"
+            android:textAppearance="?android:textAppearanceListItem"
+            android:onClick="@{() ->  callback.onClick(item)}">
+
+    </TextView>
+</layout>

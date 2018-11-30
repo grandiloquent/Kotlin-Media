@@ -6,16 +6,13 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
-import android.media.AudioManager.STREAM_MUSIC
 import android.os.Build
-import android.os.Message
 import android.preference.PreferenceManager
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.util.DisplayMetrics
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 
 
 fun Context.getPackageIcon(): Drawable? {

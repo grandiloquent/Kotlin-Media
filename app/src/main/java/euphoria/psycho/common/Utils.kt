@@ -1,15 +1,15 @@
 package euphoria.psycho.common
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.text.Editable
+import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.widget.EditText
 import java.io.File
 import java.util.*
-import android.app.Activity
-import android.util.DisplayMetrics
 
 
 val SDK_INT by lazy {

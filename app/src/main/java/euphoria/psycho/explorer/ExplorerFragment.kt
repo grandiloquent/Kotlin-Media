@@ -1,25 +1,27 @@
 package euphoria.psycho.explorer
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
+import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import euphoria.psycho.common.getDefaultSharedPreferences
+import euphoria.psycho.common.getRealSize
 import euphoria.psycho.common.isVideoFast
 import euphoria.psycho.common.ui.SwipeRefreshLayout
 import euphoria.psycho.player.VideoPlayer
-import euphoria.psycho.videos.MovieActivity
-import euphoria.psycho.videos.MoviePlayer
 import euphoria.psycho.videos.R
-import kotlinx.android.synthetic.main.abc_alert_dialog_material.*
-import kotlinx.android.synthetic.main.activity_main.*
+import euphoria.psycho.videos.databinding.FragmentBookmarkBinding
 import kotlinx.android.synthetic.main.fragment_explorer.*
 import java.io.File
 import java.text.Collator
@@ -99,7 +101,7 @@ class ExplorerFragment : Fragment() {
                 )
             )
         }
-        uiToolbar.title = dir.name
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = dir.name
         return list
     }
 
@@ -127,27 +129,38 @@ class ExplorerFragment : Fragment() {
                 }
             } else {
                 mDirectory = item.fullName
-                mExplorerAdapter.updateDataset(fetchItems(File(mDirectory)))
+                refreshList()
             }
         }
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = mExplorerAdapter
-        swipeRefreshLayout.listener = object : SwipeRefreshLayout.OnRefreshListener {
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(requireContext())
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL))
+            adapter = mExplorerAdapter
+        }
+
+        swipe_layout.listener = object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
-                swipeRefreshLayout.setRefreshing(false)
+                swipe_layout.setRefreshing(false)
             }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.fragment_explorer, container, false)
+    }
+
+    private fun refreshList() {
+        mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_storage -> {
-                mDirectory = Environment.getExternalStorageDirectory().absolutePath
+                openBookMark()
+                return true
             }
             R.id.action_ascending -> mAscending = true
             R.id.action_descending -> mAscending = false
@@ -157,8 +170,46 @@ class ExplorerFragment : Fragment() {
             R.id.action_sortby_type -> mSortBy = SORTBY_TYPE
             else -> return true
         }
-        mExplorerAdapter.updateDataset(fetchItems(File(mDirectory), mSortBy, mAscending))
+        refreshList()
         return true
+    }
+
+    private fun openBookMark() {
+        val context = requireContext()
+        val bookmarkAdapter = BookmarkAdapter(BookmarkDatabase.newInstance(requireContext()).fetchBookmarks())
+
+        val binding =
+            DataBindingUtil.inflate<FragmentBookmarkBinding>(
+                LayoutInflater.from(context),
+                R.layout.fragment_bookmark,
+                null,
+                false
+            )
+        binding.recyclerView.run {
+            setHasFixedSize(true)
+            adapter = bookmarkAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        val point = requireActivity().getRealSize()
+        val popupWindow = PopupWindow(
+            binding.root,
+            (point.x * 0.88).toInt(),
+            WindowManager.LayoutParams.WRAP_CONTENT
+        ).apply {
+
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable(Color.WHITE))
+            showAtLocation(swipe_layout, Gravity.CENTER, 0, 0)
+
+        }
+        bookmarkAdapter.bookmarkClickCallback = object : BookmarkClickCallback {
+            override fun onClick(bookmark: Bookmark) {
+                mDirectory = bookmark.fullPath
+                refreshList()
+                popupWindow.dismiss()
+            }
+
+        }
     }
 
     override fun onPause() {
@@ -166,6 +217,7 @@ class ExplorerFragment : Fragment() {
         requireContext().getDefaultSharedPreferences().edit().putString(KEY_DIRECTORY, mDirectory)
             .putInt(KEY_SORTBY, mSortBy)
             .putBoolean(KEY_ASCENDING, mAscending).apply()
+
     }
 
 
@@ -178,6 +230,7 @@ class ExplorerFragment : Fragment() {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     val dir = File(mDirectory)
                     return@OnKeyListener dir.parentFile?.let {
+                        mDirectory = it.absolutePath
                         mExplorerAdapter.updateDataset(fetchItems(it, mSortBy, mAscending))
                         true
                     } ?: false
@@ -199,3 +252,4 @@ class ExplorerFragment : Fragment() {
 
     }
 }
+

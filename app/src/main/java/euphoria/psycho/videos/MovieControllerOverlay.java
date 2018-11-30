@@ -3,13 +3,12 @@ package euphoria.psycho.videos;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.core.view.ScaleGestureDetectorCompat;
 
 /**
  * The playback controller for the Movie Player.

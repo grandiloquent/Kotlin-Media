@@ -1,6 +1,5 @@
 package euphoria.psycho.common
 
-import android.content.Context
 import android.media.AudioManager
 
 fun AudioManager.getMusicMaxVolume(): Int {

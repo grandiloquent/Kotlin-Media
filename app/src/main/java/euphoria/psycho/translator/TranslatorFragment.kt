@@ -3,8 +3,6 @@ package euphoria.psycho.translator
 import android.content.ClipData
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
