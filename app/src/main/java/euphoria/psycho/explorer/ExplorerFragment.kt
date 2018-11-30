@@ -179,7 +179,12 @@ class ExplorerFragment : Fragment() {
                 AlertDialog
                     .Builder(requireContext())
                     .setTitle(R.string.dialog_title_ask)
-                    .setMessage(R.string.dialog_message_delete)
+                    .setMessage(
+                        String.format(
+                            getString(R.string.dialog_message_delete),
+                            item.fullName.getFilenameFromPath()
+                        )
+                    )
                     .setPositiveButton(android.R.string.ok) { dialog, which ->
                         File(item.fullName).delete()
                         refreshList()

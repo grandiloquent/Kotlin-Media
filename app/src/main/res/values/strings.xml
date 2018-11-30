@@ -7,7 +7,7 @@
     <string name="details_hms" translatable="false">%1$d:%2$02d:%3$02d</string>
     <string name="details_ms" translatable="false">%1$02d:%2$02d</string>
     <string name="dialog_jump_description">当前播放视频的总时长:</string>
-    <string name="dialog_message_delete">确定删除选定文件吗？</string>
+    <string name="dialog_message_delete">确定删除 %s 吗？</string>
     <string name="dialog_message_move">请键入新的文件名？</string>
 
     <string name="dialog_title_ask">询问</string>
