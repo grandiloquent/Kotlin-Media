@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="menu_seek_to">Seek To</string>
     <string name="accessibility_pause_video">Pause video</string>
     <string name="accessibility_play_video">Play video</string>
     <string name="accessibility_reload_video">Reload video</string>
@@ -8,6 +7,10 @@
     <string name="details_hms" translatable="false">%1$d:%2$02d:%3$02d</string>
     <string name="details_ms" translatable="false">%1$02d:%2$02d</string>
     <string name="dialog_jump_description">当前播放视频的总时长:</string>
+    <string name="dialog_message_delete">确定删除选定文件吗？</string>
+    <string name="dialog_message_move">请键入新的文件名？</string>
+
+    <string name="dialog_title_ask">询问</string>
     <string name="explorer">Explorer</string>
     <string name="fragment_translator">Translator</string>
     <string name="header_subtitle_gallery">Videos and Photos in the directory</string>
@@ -16,6 +19,9 @@
     <string name="loading_video">Loading video\u2026</string>
     <string name="menu_language_en">English</string>
     <string name="menu_language_zh">Chinese</string>
+    <string name="menu_seek_to">Seek To</string>
+    <string name="menu_to_srt">Convert to .srt</string>
+    <string name="no_app_found">No valid app found</string>
     <string name="resume_playing_message">Resume playing from %s ?</string>
     <string name="resume_playing_restart">Start over</string>
     <string name="resume_playing_title">Resume video</string>
@@ -24,5 +30,4 @@
     <string name="translateVoice">voice translate</string>
     <string name="translationEditHint">Enter or paste words or sentences to translate.</string>
     <string name="translationResultTitle">译文</string>
-    <string name="menu_to_srt">Convert to .srt</string>
 </resources>

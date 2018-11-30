@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -19,7 +20,7 @@ class ExplorerAdapter(
     private val dataset: MutableList<ExplorerItem>
 ) :
     RecyclerView.Adapter<ExplorerAdapter.ViewHolder>() {
-
+    var actionCallback: ExplorerActionCallback? = null
     val mOptions by lazy {
         val imageSize = context.dp2px(40.0f).toInt()
         RequestOptions()
@@ -56,6 +57,28 @@ class ExplorerAdapter(
         notifyDataSetChanged()
     }
 
+    private fun showMenu(viewHolder: ViewHolder) {
+        PopupMenu(context, viewHolder.image_more).run {
+            menuInflater.inflate(R.menu.menu_file, menu)
+            setOnMenuItemClickListener { item ->
+                actionCallback?.let {
+                    val set = dataset[viewHolder.adapterPosition]
+                    when (item.itemId) {
+                        R.id.action_delete -> it.onDelete(set)
+                        R.id.action_rename -> it.onMoveFile(set)
+                        R.id.action_copy_full_path -> it.onCopyFullPath(set)
+                        R.id.action_add_bookmark -> it.onAddBookmark(set)
+                        R.id.action_calculate_directory -> it.onCalculateDirectory(set)
+                    }
+                }
+
+                true
+            }
+            show()
+        }
+
+    }
+
     override fun getItemCount(): Int {
         return dataset.size
     }
@@ -86,7 +109,7 @@ class ExplorerAdapter(
         }
         holder.textViewName.text = item.fullName.substringAfterLast('/')
         holder.textViewSize.text = if (item.isFile) item.size.formatSize() else "${item.size} 个"
-
+        holder.image_more.setOnClickListener { showMenu(holder) }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -94,5 +117,7 @@ class ExplorerAdapter(
         val imageView = itemView.findViewById<ImageView>(R.id.imageView)
         val textViewName = itemView.findViewById<TextView>(R.id.textViewName)
         val textViewSize = itemView.findViewById<TextView>(R.id.textViewSize)
+        val image_more = itemView.findViewById<ImageView>(R.id.image_more)
     }
 }
+

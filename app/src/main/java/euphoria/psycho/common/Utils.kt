@@ -124,8 +124,8 @@ fun dialog(
     val dialog = AlertDialog.Builder(context)
         .setView(editText)
         .setTitle(title)
-        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-        .setPositiveButton("确定") { dialog, _ ->
+        .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
+        .setPositiveButton(android.R.string.ok) { dialog, _ ->
             dialog.dismiss()
             positiveListener(editText.text)
         }.create()

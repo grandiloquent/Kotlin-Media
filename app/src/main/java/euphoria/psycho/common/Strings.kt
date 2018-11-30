@@ -1,5 +1,7 @@
 package  euphoria.psycho.common
 
+import android.content.ClipData
+import android.content.Context
 import android.os.Environment
 import java.io.File
 import java.util.*
@@ -14,6 +16,11 @@ fun String.isAudioFast() = audioExtensions.any { endsWith(it, true) }
 fun String.isPhotoFast() = photoExtensions.any { endsWith(it, true) }
 fun String.isAchieveFast() = achieveExtensions.any { endsWith(it, true) }
 fun String.isPlainTextFast() = plainTextExtensions.any { endsWith(it, true) }
+
+
+fun String.copyToClipboard(context: Context) {
+    context.getClipboardManager().primaryClip = ClipData.newPlainText(null, this)
+}
 
 fun String.isFile(): Boolean {
     return File(this).run {

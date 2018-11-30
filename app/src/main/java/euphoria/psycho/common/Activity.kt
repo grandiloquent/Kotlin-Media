@@ -1,16 +1,22 @@
 package  euphoria.psycho.common
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Point
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Surface
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import euphoria.psycho.videos.BuildConfig
+import euphoria.psycho.videos.R
+import java.io.File
 
 fun Activity.getRealSize(): Point {
 
@@ -63,6 +69,22 @@ fun Activity.getDisplayRotation(): Int {
         Surface.ROTATION_180 -> 180
         Surface.ROTATION_270 -> 270
         else -> 0
+    }
+}
+
+fun Activity.openPathIntent(path: String) {
+    Intent().run {
+        action = Intent.ACTION_VIEW
+        setDataAndType(
+            FileProvider.getUriForFile(this@openPathIntent, "${BuildConfig.APPLICATION_ID}.provider", File(path)),
+            path.getMimeType()
+        )
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        if (resolveActivity(packageManager) != null) {
+            startActivity(this)
+        } else {
+            toast(getString(R.string.no_app_found), false)
+        }
     }
 }
 

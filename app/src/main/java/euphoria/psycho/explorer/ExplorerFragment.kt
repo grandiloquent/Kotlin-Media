@@ -7,7 +7,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.view.*
+import android.widget.EditText
 import android.widget.PopupWindow
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -15,14 +18,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import euphoria.psycho.common.getDefaultSharedPreferences
-import euphoria.psycho.common.getRealSize
-import euphoria.psycho.common.isVideoFast
+import euphoria.psycho.common.*
 import euphoria.psycho.common.ui.SwipeRefreshLayout
 import euphoria.psycho.player.VideoPlayer
 import euphoria.psycho.videos.R
 import euphoria.psycho.videos.databinding.FragmentBookmarkBinding
 import kotlinx.android.synthetic.main.fragment_explorer.*
+import kotlinx.android.synthetic.main.fragment_translate.*
+import kotlinx.coroutines.*
 import java.io.File
 import java.text.Collator
 import java.util.*
@@ -115,6 +118,79 @@ class ExplorerFragment : Fragment() {
         val items = fetchItems(File(mDirectory), mSortBy, mAscending)
         mRequestManager = Glide.with(this)
         mExplorerAdapter = ExplorerAdapter(requireContext(), mRequestManager, items)
+        mExplorerAdapter.actionCallback = object : ExplorerActionCallback {
+            override fun onCalculateDirectory(item: ExplorerItem) {
+                val dir = File(item.fullName)
+                if (dir.isDirectory) {
+                    GlobalScope.launch {
+
+                        var count = 0
+                        var size = 0L
+                        dir.walkTopDown().forEach {
+                            if (it.isFile) {
+                                count++
+                                size += it.length()
+                            }
+                        }
+                        GlobalScope.launch(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "文件数：$count,总大小: ${size.formatSize()}", Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    }
+                }
+
+            }
+
+            override fun onCopyFullPath(item: ExplorerItem) {
+                item.fullName.copyToClipboard(requireContext())
+            }
+
+            override fun onMoveFile(item: ExplorerItem) {
+
+                val editText = EditText(requireContext()).apply {
+                    setText(item.fullName.substringAfterLast('/'))
+                    val position = item.fullName.getFilenameFromPath().indexOfLast { it == '.' }
+                    if (position > 0) {
+                        setSelection(0, position)
+                    }
+                }
+                val dialog = AlertDialog
+                    .Builder(requireContext())
+                    .setTitle(R.string.dialog_title_ask)
+                    .setMessage(R.string.dialog_message_move)
+                    .setView(editText)
+                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                        File(item.fullName).renameTo(File(item.fullName.getParentPath(), editText.text.toString()))
+                        refreshList()
+                        dialog.dismiss()
+                    }.setNegativeButton(android.R.string.cancel) { dialog, which ->
+                        dialog.dismiss()
+                    }.show()
+                dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+
+
+            }
+
+            override fun onAddBookmark(item: ExplorerItem) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDelete(item: ExplorerItem) {
+                AlertDialog
+                    .Builder(requireContext())
+                    .setTitle(R.string.dialog_title_ask)
+                    .setMessage(R.string.dialog_message_delete)
+                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                        File(item.fullName).delete()
+                        refreshList()
+                        dialog.dismiss()
+                    }.setNegativeButton(android.R.string.cancel) { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .show()
+            }
+
+        }
         mExplorerAdapter.onClicked = { item ->
             if (item.isFile) {
                 if (item.fullName.isVideoFast()) {
@@ -123,9 +199,7 @@ class ExplorerFragment : Fragment() {
                     intent.putExtra(Intent.EXTRA_TITLE, item.fullName.substringAfterLast('/'))
                     requireContext().startActivity(intent)
                 } else {
-//                    requireContext().startActivity(Intent(Intent.ACTION_VIEW).also {
-//                        it.data = Uri.fromFile(File(item.fullName))
-//                    })
+                    requireActivity().openPathIntent(item.fullName)
                 }
             } else {
                 mDirectory = item.fullName
